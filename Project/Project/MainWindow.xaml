@@ -1,0 +1,17 @@
+﻿<Window x:Name="window" x:Class="Project.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:Project"
+        mc:Ignorable="d"
+        Title="MainWindow" Height="450" Width="800" Loaded="Window_Loaded">
+	<Grid>
+		<Image x:Name="ColorCam" HorizontalAlignment="Left" Height="240" Margin="47,43,0,0" VerticalAlignment="Top" Width="419"/>
+		<Image x:Name="DrawingPlane" HorizontalAlignment="Left" Height="399" Margin="10,10,0,0" VerticalAlignment="Top" Width="772"/>
+		<Image x:Name="Select_Hold" Margin="-171,108,913,261" Source="Images/CursorSelection_Holding.png" Stretch="Fill"/>
+		<Image x:Name="Select_Outline" Margin="-171,108,913,261" Source="Images/CursorSelection_Outline.png" Stretch="Fill"/>
+		<Image x:Name="TopLeft" Margin="-171,197,913,172" Source="Images/AreaSelection_TopLeft_Normal.png" Stretch="Fill"/>
+
+	</Grid>
+</Window>

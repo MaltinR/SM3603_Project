@@ -102,6 +102,12 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Images\AreaSelection_Close_Normal.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Images\AreaSelection_Close_Selecting.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
     <Content Include="Images\CursorSelection_Holding.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>

@@ -22,6 +22,7 @@ namespace Project
         public int Height { get; protected set; } = 50;
         public Rect Rect { get; protected set; }
         protected bool isHovering;
+        public int HoveringTime { get; protected set; } = -1;//-1 == no stay event
 
         //Call when hovering
         protected virtual void Hovering(int mousePosX, int mousePosY)
@@ -33,6 +34,17 @@ namespace Project
         {
 
         }
+
+        protected virtual void OnRelease(int mousePosX, int mousePosY)
+        {
+
+        }
+
+        protected virtual void HoverTimesUp(int mousePosX, int mousePosY)
+        {
+
+        }
+
         public virtual bool InRange(int mousePosX, int mousePosY)
         {
             return mousePosX > PosX && mousePosX < PosX + Width &&
@@ -50,19 +62,40 @@ namespace Project
                 }
                 else
                 {
+                    OnRelease(mousePosX, mousePosY);
                     MainWindow.dragging = null;
                 }
             }
 
-            if (InRange(mousePosX, mousePosY))
+            //Please make sure it doesnt have overlap problem
+            //Otherwise MainWindow.hovering will have a incorrect value
+            if ((MainWindow.hovering == null || MainWindow.hovering == this) && MainWindow.dragging == null && InRange(mousePosX, mousePosY))
             {
+                //TODO each point should have an individual timer and class
+                if (HoveringTime > 0 && MainWindow.hovering == this && ++MainWindow.timerOfHovering >= HoveringTime)
+                {
+                    MainWindow.timerOfHovering = 0;
+                    HoverTimesUp(mousePosX, mousePosY);
+                }
+
+                MainWindow.hovering = this;
                 isHovering = true;
                 Hovering(mousePosX, mousePosY);
-                if(MainWindow.dragging == null && mouseState == MouseButtonState.Pressed)
+
+                if (MainWindow.dragging == null && mouseState == MouseButtonState.Pressed)
                 {
                     MainWindow.dragging = this;
                 }
                 return true;
+            }
+            else
+            {
+                //Release it
+                if(MainWindow.hovering == this)
+                {
+                    MainWindow.timerOfHovering = 0;
+                    MainWindow.hovering = null;
+                }
             }
             return false;
         }
@@ -87,6 +120,11 @@ namespace Project
         {
             Rect = new Rect(PosX + Parent.PosX, PosY + Parent.PosY, Width, Height);
         }
+    }
+
+    public class GlobalControlUnit : ControlUnit
+    {
+
     }
 
     public class TopLeftScale : LocalControlUnit
@@ -164,13 +202,9 @@ namespace Project
     public class TopCenterDrag : LocalControlUnit
     {
         //TODO: when dragging, show TopRightFull & MiddleRightClose and check them
-        LocalControlUnit[] localControlUnits;
         public TopCenterDrag(NonDesktopApplication parent)
         {
             Parent = parent;
-            localControlUnits = new LocalControlUnit[] { 
-                new TopRightFull(), new MiddleRightClose()
-            };
 
             Image_Normal = new BitmapImage(new Uri("Images/AreaSelection_Drag_Normal.png", UriKind.Relative));
             Image_Selecting = new BitmapImage(new Uri("Images/AreaSelection_Drag_Selecting.png", UriKind.Relative));
@@ -198,15 +232,88 @@ namespace Project
         }
     }
 
-    //Appears when dragging
-    public class TopRightFull : LocalControlUnit
+    public class TopRightClose : LocalControlUnit
     {
+        public TopRightClose(NonDesktopApplication parent)
+        {
+            Parent = parent;
+            Image_Normal = new BitmapImage(new Uri("Images/AreaSelection_Close_Normal.png", UriKind.Relative));
+            Image_Selecting = new BitmapImage(new Uri("Images/AreaSelection_Close_Selecting.png", UriKind.Relative));
+            HoveringTime = 30;
 
+            Width = 50;
+            Height = 50;
+            PosX = Parent.Width - Width;
+            PosY = 0;
+            UpdateRect();
+        }
+
+        public override void UpdateRect()
+        {
+            PosX = Parent.Width - Width;
+            PosY = 0;
+            base.UpdateRect();
+        }
+
+        protected override void HoverTimesUp(int mousePosX, int mousePosY)
+        {
+            MainWindow.mainWindow.RemoveFromApp(Parent);
+            Trace.WriteLine("Close");
+        }
     }
-
-    //Appears when dragging
-    public class MiddleRightClose : LocalControlUnit
+    public class BotCenterMenu : GlobalControlUnit
     {
+        public BotCenterMenu()
+        {
+            Image_Normal = new BitmapImage(new Uri("Images/AreaSelection_Menu_Normal.png", UriKind.Relative));
+            Image_Selecting = new BitmapImage(new Uri("Images/AreaSelection_Menu_Selecting.png", UriKind.Relative));
 
+            Width = 50;
+            Height = 50;
+            PosX = (MainWindow.Drawing_Width - Width) / 2;
+            PosY = MainWindow.Drawing_Height - Height;
+
+            Rect = new Rect(PosX, PosY, Width, Height);
+        }
+
+        protected override void Dragging(int mousePosX, int mousePosY)
+        {
+            if (mousePosX < Width / 2 ||
+                mousePosX > MainWindow.Drawing_Width - Width / 2 ||
+                mousePosY < Height / 2 ||
+                mousePosY > MainWindow.Drawing_Height - Height / 2)
+                return;
+
+            MainWindow.menu.SetDrag(true);
+
+            //Print Menu
+            if (!MainWindow.menu.IsShowed)
+                MainWindow.DrawingContext.DrawRectangle(Brushes.Gray, null, new Rect(0, mousePosY, MainWindow.Drawing_Width, MainWindow.Drawing_Height - mousePosY));
+            else
+                MainWindow.DrawingContext.DrawRectangle(Brushes.Gray, null, new Rect(0, 0, MainWindow.Drawing_Width, mousePosY));
+
+            Rect = new Rect(PosX, mousePosY - Height/2, Width, Height);
+        }
+
+        protected override void OnRelease(int mousePosX, int mousePosY)
+        {
+            Trace.WriteLine("mousePosY: " + mousePosY + " Drawing_Height: " + MainWindow.Drawing_Height + " /2 : " + (MainWindow.Drawing_Height / 2));
+
+            MainWindow.menu.SetDrag(false);
+
+            //Check if is half
+            if (mousePosY < MainWindow.Drawing_Height / 2)
+            {
+                //Show menu
+                MainWindow.menu.SetShow(!MainWindow.menu.IsShowed);
+
+                if(MainWindow.menu.IsShowed)
+                    MainWindow.mainWindow.SetFocus(MainWindow.menu);
+            }
+
+            Rect = new Rect(PosX, PosY, Width, Height);
+        }
+
+        //TODO: needs UpdateRect as well when changing the window
     }
 }

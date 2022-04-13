@@ -24,7 +24,7 @@ namespace Project
             parent = _parent;
             controlUnits = new ControlUnit[] {
                 new TopLeftScale(parent), new BotRightScale(parent),
-                new TopCenterDrag(parent)
+                new TopCenterDrag(parent), new TopRightClose(parent)
             };
         }
 

@@ -29,9 +29,15 @@ namespace Project
 
         DrawingGroup drawingGroup;
         DrawingImage drawingImg;
+
+        public static MainWindow mainWindow;
         public static DrawingContext DrawingContext { get; private set; }
         public static int Drawing_Width;
         public static int Drawing_Height;
+        //To be wrapped up
+        public static int timerOfHovering = 0;
+
+        List<Proj_Application> list_ToBeRemoved;
 
         //Color frame
         byte[] blackScreenData = null;
@@ -46,12 +52,19 @@ namespace Project
         //Applications
         List<Proj_Application> runningApps;
         Proj_Application onFocusApp;
+        public static Menu menu { get; private set; }//The only
 
-        //Temp
+        //Global controlunit
+        public List<GlobalControlUnit> globalUnits;
+
+        //Temp (Will be wrapped as a class)
         public static ControlUnit dragging;
+        public static ControlUnit hovering;
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
+            mainWindow = this;
+
             Drawing_Width = (int)DrawingPlane.Width;
             Drawing_Height = (int)DrawingPlane.Height;
 
@@ -61,15 +74,20 @@ namespace Project
             ColorFrameInit();
             DrawingGroupInit();
 
-            Trace.WriteLine("Loaded1");
+            //GlobalUnits
+            globalUnits = new List<GlobalControlUnit>();
+            globalUnits.Add(new BotCenterMenu());
 
             runningApps = new List<Proj_Application>();
+            list_ToBeRemoved = new List<Proj_Application>();
             //At least one application will be run, which is the desktop
+            menu = new Menu();
             onFocusApp = new App_Desktop();
             runningApps.Add(onFocusApp);
+            runningApps.Add(menu);
 
             //Debug
-            runningApps.Add(new App_VideoPlayer());
+            runningApps.Add(new App_VideoPlayer("E:/School/CityU/221/SM3603/SM3603_Project/SampleVideos/277865651_138940418661949_6096681436469973289_n.mp4"));
         }
 
         //This following function is borrowed from course's slides
@@ -118,7 +136,7 @@ namespace Project
             using (DrawingContext dc = drawingGroup.Open())
             {
                 DrawingContext = dc;
-                Trace.WriteLine("Loaded2");
+                //Trace.WriteLine("Loaded2");
 
                 // draw a transparent background to set the render size
                 dc.DrawRectangle(Brushes.Transparent, null,
@@ -132,6 +150,17 @@ namespace Project
                 {
                     app.Print();
                 }
+
+                //GlobalUnit
+                int clampedX = mousePos.X < 0 ? 0 : mousePos.X > MainWindow.Drawing_Width ? MainWindow.Drawing_Width : (int)mousePos.X;
+                int clampedY = mousePos.Y < 0 ? 0 : mousePos.Y > MainWindow.Drawing_Height ? MainWindow.Drawing_Height : (int)mousePos.Y;
+
+                foreach (GlobalControlUnit unit in globalUnits)
+                {
+                    unit.IsHovering(clampedX, clampedY, Mouse.LeftButton);
+                    unit.Show(dc);
+                }
+
                 //Update app
                 foreach (Proj_Application app in runningApps)
                 {
@@ -139,14 +168,50 @@ namespace Project
                     app.Update(app == onFocusApp, mousePos, Mouse.LeftButton);
                 }
 
-                int scale_Hold = (int)(frameLoop / 30.0 * 50.0);
-                //dc.DrawImage(Select_Hold.Source, new Rect(mousePos.X - scale_Hold / 2, mousePos.Y - scale_Hold / 2, scale_Hold, scale_Hold));
-                //dc.DrawImage(Select_Outline.Source, new Rect(mousePos.X - 50 / 2, mousePos.Y - 50 / 2, 50, 50));
-                //throw new NotImplementedException();
+                //Trace.WriteLine("hovering: " + (hovering == null) + " " + (hovering is BotCenterMenu));
+                
+
+                if (timerOfHovering > 0)
+                {
+                    int scale_Hold = (int)(timerOfHovering / (double)hovering.HoveringTime * 50.0);
+
+                    dc.DrawImage(Select_Hold.Source, new Rect(mousePos.X - scale_Hold / 2, mousePos.Y - scale_Hold / 2, scale_Hold, scale_Hold));
+                    dc.DrawImage(Select_Outline.Source, new Rect(mousePos.X - 50 / 2, mousePos.Y - 50 / 2, 50, 50));
+                }
+
+                //LateProcess (RemoveApp)
+                LateProcess();
             }
 
             frameLoop++;
             if (frameLoop >= 30) frameLoop = 0;
+        }
+
+        public void RemoveFromApp(Proj_Application app)
+        {
+            list_ToBeRemoved.Add(app);
+        }
+
+        void LateProcess()
+        {
+            Late_RemoveApp();
+        }
+
+        void Late_RemoveApp()
+        {
+            for (int i = list_ToBeRemoved.Count - 1; i >= 0; i--)
+            {
+                runningApps.Remove(list_ToBeRemoved[i]);
+                list_ToBeRemoved.RemoveAt(i);
+            }
+        }
+
+        public void SetFocus(Proj_Application app)
+        {
+            onFocusApp = app;
+
+            //TODO: change the order of the list
+
         }
     }
 }

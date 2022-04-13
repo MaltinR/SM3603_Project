@@ -17,7 +17,6 @@ namespace Project
         public int PosY { get; protected set; }//Top-left pos
         public int Width { get; protected set; } = 300;
         public int Height { get; protected set; } = 250;
-        public Rect Rect { get; protected set; }
 
         public void SetWidth(int _width)
         {
@@ -74,7 +73,7 @@ namespace Project
             MainWindow.DrawingContext.DrawRectangle(Brushes.Black, null, Rect);
         }
 
-        public void UpdateRect()
+        public virtual void UpdateRect()
         {
             PosX = PosX < 0 ? 0 : PosX > MainWindow.Drawing_Width - Width ? MainWindow.Drawing_Width - Width : PosX;
             PosY = PosY < 0 ? 0 : PosY > MainWindow.Drawing_Height - Height ? MainWindow.Drawing_Height - Height : PosY;

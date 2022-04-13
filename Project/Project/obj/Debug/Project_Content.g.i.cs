@@ -8,6 +8,10 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
+[assembly: System.Windows.Resources.AssemblyAssociatedContentFileAttribute("images/areaselection_close_normal.png")]
+[assembly: System.Windows.Resources.AssemblyAssociatedContentFileAttribute("images/areaselection_close_selecting.png")]
+[assembly: System.Windows.Resources.AssemblyAssociatedContentFileAttribute("images/areaselection_switch_normal.png")]
+[assembly: System.Windows.Resources.AssemblyAssociatedContentFileAttribute("images/areaselection_switch_selecting.png")]
 [assembly: System.Windows.Resources.AssemblyAssociatedContentFileAttribute("images/cursorselection_holding.png")]
 [assembly: System.Windows.Resources.AssemblyAssociatedContentFileAttribute("images/cursorselection_outline.png")]
 [assembly: System.Windows.Resources.AssemblyAssociatedContentFileAttribute("images/areaselection_botright_normal.png")]

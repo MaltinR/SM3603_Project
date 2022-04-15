@@ -58,5 +58,16 @@ namespace Project
         {
             return isSelecting ? BitmapImages_Selecting[(int)appEnum] : BitmapImages_Normal[(int)appEnum];
         }
+
+        public static AppEnum GetEnum(string ext)
+        {
+            AppEnum appEnum;
+            if (!Dictionary.TryGetValue(ext, out appEnum))
+            {
+                appEnum = AppEnum.Other;
+            }
+
+            return appEnum;
+        }
     }
 }

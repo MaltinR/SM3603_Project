@@ -56,6 +56,8 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="RenderManager.cs" />
+    <Compile Include="Switcher.cs" />
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -65,8 +67,10 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="AppManager.cs" />
+    <Compile Include="App_Calculator.cs" />
     <Compile Include="App_FileExplorer.cs" />
     <Compile Include="FileExtensionDictionary.cs" />
+    <Compile Include="Menu.cs" />
     <Compile Include="Proj_Application.cs" />
     <Compile Include="App_Desktop.cs" />
     <Compile Include="App_VideoPlayer.cs" />

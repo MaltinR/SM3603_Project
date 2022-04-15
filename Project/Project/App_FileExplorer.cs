@@ -43,8 +43,34 @@ namespace Project
 
         public override void Print()
         {
-            MainWindow.DrawingContext.DrawRectangle(Brushes.White, null, Rect);
-            //base.Print();
+            MainWindow.RenderManager.DrawingContext.DrawRectangle(Brushes.White, null, Rect);
+
+            int currentY = PosY + 50;
+            for (int i = 0; i < currentFiles.Length; i++)
+            {
+                FormattedText formattedText = new FormattedText(currentFiles[i].Name,
+                    CultureInfo.GetCultureInfo("en-us"),
+                    FlowDirection.LeftToRight,
+                    new Typeface("Verdana"),
+                    16,
+                    Brushes.Black, 30);
+                formattedText.MaxTextWidth = Width - 40;
+
+                MainWindow.RenderManager.DrawingContext.DrawImage(
+                    FileExtensionDictionary.GetImage(FileExtensionDictionary.GetEnum(currentFiles[i].Name.Substring(currentFiles[i].Name.LastIndexOf('.'))), false), new Rect(PosX + 20, currentY, 16, 16)
+                );
+
+                MainWindow.RenderManager.DrawingContext.DrawText(formattedText, new Point(PosX + 40, currentY)
+                );
+                currentY += 18;
+                //Trace.WriteLine(file.Name);
+                //Depends on the height of the app
+                //If exceeds, break
+                if (currentY + 18 > PosY + Height)
+                    break;
+            }
+
+            LocalEdgeControl.Print();
         }
 
         public override void Update(bool isFocusing, Point point, MouseButtonState mouseState)
@@ -52,24 +78,6 @@ namespace Project
             //TODO: detect pos
             base.Update(isFocusing, point, mouseState);
 
-            for(int i = 0;i < currentFiles.Length;i++)
-            {
-                FormattedText formattedText = new FormattedText(currentFiles[i].Name,
-                    CultureInfo.GetCultureInfo("en-us"),
-                    FlowDirection.LeftToRight,
-                    new Typeface("Verdana"),
-                    32,
-                    Brushes.Black, 30);
-                formattedText.MaxTextWidth = Width - 100;
-
-                MainWindow.DrawingContext.DrawText(formattedText, new Point(PosX + 100, PosY + 100 + i * 18)
-                );
-                //Trace.WriteLine(file.Name);
-                //Depends on the height of the app
-                //If exceeds, break
-                if (false)
-                    break;
-            }
         }
     }
 }

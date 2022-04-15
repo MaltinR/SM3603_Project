@@ -30,7 +30,7 @@ namespace Project
             controlZones = new LocalControlUnit[] { new Video_Timespan(this), new Video_Volume(this) };
 
             player = new MediaPlayer();
-            player.Open(new Uri("E:/School/CityU/221/SM3603/SM3603_Project/SampleVideos/277865651_138940418661949_6096681436469973289_n.mp4"));
+            player.Open(new Uri(path));
             player.Play();
 
             video_AspectRatio = 0;
@@ -46,13 +46,13 @@ namespace Project
 
             foreach (LocalControlUnit unit in controlZones)
             {
-                unit.IsHovering(clampedX, clampedY, mouseState);
+                unit.IsHoveringOrDragging(clampedX, clampedY, mouseState);
             }
         }
 
         public override void Print()
         {
-            MainWindow.DrawingContext.DrawRectangle(Brushes.Black, null, Rect);
+            MainWindow.RenderManager.DrawingContext.DrawRectangle(Brushes.Black, null, Rect);
 
             //Cal the resolution, since in the contructor it hasn't been calculated
             if (video_AspectRatio == 0)
@@ -69,7 +69,7 @@ namespace Project
 
                 //Cal the video height
                 double video_Height = Width / video_AspectRatio;
-                MainWindow.DrawingContext.DrawVideo(player, new Rect(PosX, PosY + (Height - video_Height) / 2, Width, video_Height));
+                MainWindow.RenderManager.DrawingContext.DrawVideo(player, new Rect(PosX, PosY + (Height - video_Height) / 2, Width, video_Height));
             }
             else
             {
@@ -77,9 +77,10 @@ namespace Project
 
                 //Cal the video width
                 double video_Width = Height * video_AspectRatio;
-                MainWindow.DrawingContext.DrawVideo(player, new Rect(PosX + (Width - video_Width) / 2, PosY, video_Width, Height));
+                MainWindow.RenderManager.DrawingContext.DrawVideo(player, new Rect(PosX + (Width - video_Width) / 2, PosY, video_Width, Height));
             }
 
+            LocalEdgeControl.Print();
         }
 
         public override void UpdateRect()

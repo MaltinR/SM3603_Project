@@ -14,6 +14,7 @@ namespace Project
     {
         NonDesktopApplication parent;
         public const int showUpRange = 75;
+        bool isHoveringOrDragging;
         //TopLeftScale
         //BottomRightScale
         //TopCenterDrag
@@ -42,23 +43,25 @@ namespace Project
             int clampedX = point.X < 0 ? 0 : point.X > MainWindow.Drawing_Width ? MainWindow.Drawing_Width: (int)point.X;
             int clampedY = point.Y < 0 ? 0 : point.Y > MainWindow.Drawing_Height ? MainWindow.Drawing_Height : (int)point.Y;
             //Get pos and check is hovering
-            bool isHovering = false;
+            isHoveringOrDragging = false;
 
             foreach (ControlUnit unit in controlUnits)
             {
-                isHovering |= unit.IsHovering(clampedX, clampedY, mouseState);
-                
-            }
-
-            if (isHovering)
-            {
-                foreach (ControlUnit unit in controlUnits)
-                {
-                    unit.Show(dc);
-                }
+                isHoveringOrDragging |= unit.IsHoveringOrDragging(clampedX, clampedY, mouseState);
             }
 
             return null;
+        }
+
+        public void Print()
+        {
+            if (isHoveringOrDragging)
+            {
+                foreach (ControlUnit unit in controlUnits)
+                {
+                    unit.Show(MainWindow.RenderManager.DrawingContext);
+                }
+            }
         }
     }
 }

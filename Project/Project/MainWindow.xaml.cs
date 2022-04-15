@@ -31,7 +31,6 @@ namespace Project
         DrawingImage drawingImg;
 
         public static MainWindow mainWindow;
-        public static DrawingContext DrawingContext { get; private set; }
         public static int Drawing_Width;
         public static int Drawing_Height;
         //To be wrapped up
@@ -50,10 +49,7 @@ namespace Project
         //Applications
         public static AppManager Manager;
 
-        public static Menu menu { get; private set; }//The only
-
-        //Global controlunit
-        public List<GlobalControlUnit> globalUnits;
+        public static RenderManager RenderManager;
 
         //Temp (Will be wrapped as a class)
         public static ControlUnit dragging;//To point class (Hand)
@@ -72,15 +68,18 @@ namespace Project
             ColorFrameInit();
             DrawingGroupInit();
 
-            //GlobalUnits
-            globalUnits = new List<GlobalControlUnit>();
-            globalUnits.Add(new BotCenterMenu());
-
-            menu = new Menu();
             Manager = new AppManager();
+            RenderManager = new RenderManager();
+
+            RenderManager.RenderList.Add(new RenderManager.RenderClass(Manager.Menu));
 
             //Debug
-            //Manager.AddApp(new App_VideoPlayer("E:/School/CityU/221/SM3603/SM3603_Project/SampleVideos/277865651_138940418661949_6096681436469973289_n.mp4"));
+            Manager.AddApp(new App_VideoPlayer("E:/School/CityU/221/SM3603/SM3603_Project/SampleVideos/277957136_1030137967586408_6026758252614106551_n.mp4"));
+            Manager.AddApp(new App_FileExplorer());
+            Manager.AddApp(new App_FileExplorer());
+            Manager.AddApp(new App_FileExplorer());
+            Manager.AddApp(new App_FileExplorer());
+            Manager.AddApp(new App_FileExplorer());
             Manager.AddApp(new App_FileExplorer());
         }
 
@@ -129,49 +128,32 @@ namespace Project
 
             using (DrawingContext dc = drawingGroup.Open())
             {
-                DrawingContext = dc;
-                //Trace.WriteLine("Loaded2");
+                RenderManager.DrawingContext = dc;
 
                 // draw a transparent background to set the render size
                 dc.DrawRectangle(Brushes.Transparent, null,
                         new Rect(0.0, 0.0, DrawingPlane.Width, DrawingPlane.Height));
 
-
                 Point mousePos = Mouse.GetPosition(DrawingPlane);
 
-                //Print
-                foreach (Proj_Application app in Manager.RunningApps.Reverse<Proj_Application>())
-                {
-                    app.Print();
-                }
-
-                //GlobalUnit
                 int clampedX = mousePos.X < 0 ? 0 : mousePos.X > Drawing_Width ? Drawing_Width : (int)mousePos.X;
                 int clampedY = mousePos.Y < 0 ? 0 : mousePos.Y > Drawing_Height ? Drawing_Height : (int)mousePos.Y;
 
-                Manager.Update(clampedX, clampedY);
-                foreach (GlobalControlUnit unit in globalUnits)
-                {
-                    unit.IsHovering(clampedX, clampedY, Mouse.LeftButton);
-                    unit.Show(dc);
-                }
+                Manager.Update(clampedX, clampedY, mousePos);
 
-                //Update app
-                foreach (Proj_Application app in Manager.RunningApps)
-                {
-                    //MousePos will be subtituded by handPos and MouseOnClicked will be subtituded by gesture
-                    app.Update(app == Manager.OnFocusApp, mousePos, Mouse.LeftButton);
-                }
+                RenderManager.Render();
 
-                Trace.WriteLine("hovering: " + hovering + " | " + MainWindow.dragging + " timerOfHovering: " + timerOfHovering);
-                
+                Trace.WriteLine("hovering: " + hovering + " | " + dragging + " timerOfHovering: " + timerOfHovering);
 
                 if (timerOfHovering > 0)
                 {
                     int scale_Hold = (int)(timerOfHovering / (double)hovering.HoveringTime * 50.0);
 
-                    dc.DrawImage(Select_Hold.Source, new Rect(mousePos.X - scale_Hold / 2, mousePos.Y - scale_Hold / 2, scale_Hold, scale_Hold));
-                    dc.DrawImage(Select_Outline.Source, new Rect(mousePos.X - 50 / 2, mousePos.Y - 50 / 2, 50, 50));
+                    int cursor_ClampedX = mousePos.X < 25 ? 25 : mousePos.X > Drawing_Width - 25 ? Drawing_Width - 25 : (int)mousePos.X;
+                    int cursor_ClampedY = mousePos.Y < 25 ? 25 : mousePos.Y > Drawing_Height - 25 ? Drawing_Height - 25 : (int)mousePos.Y;
+
+                    dc.DrawImage(Select_Hold.Source, new Rect(cursor_ClampedX - scale_Hold / 2, cursor_ClampedY - scale_Hold / 2, scale_Hold, scale_Hold));
+                    dc.DrawImage(Select_Outline.Source, new Rect(cursor_ClampedX - 50 / 2, cursor_ClampedY - 50 / 2, 50, 50));
                 }
 
                 //LateProcess (RemoveApp)

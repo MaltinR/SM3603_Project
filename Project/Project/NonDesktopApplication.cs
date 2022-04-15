@@ -67,13 +67,13 @@ namespace Project
 
         public override void Update(bool isFocusing, Point point, MouseButtonState mouseState)
         {
-            LocalEdgeControl.CheckShow(point, MainWindow.DrawingContext, mouseState);
-            //throw new NotImplementedException();
+            LocalEdgeControl.CheckShow(point, MainWindow.RenderManager.DrawingContext, mouseState);
         }
 
         public override void Print()
         {
-            MainWindow.DrawingContext.DrawRectangle(Brushes.Black, null, Rect);
+            MainWindow.RenderManager.DrawingContext.DrawRectangle(Brushes.Black, null, Rect);
+            LocalEdgeControl.Print();
         }
 
         public virtual void UpdateRect()

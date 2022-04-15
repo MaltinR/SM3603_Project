@@ -37,8 +37,6 @@ namespace Project
         //To be wrapped up
         public static int timerOfHovering = 0;
 
-        List<Proj_Application> list_ToBeRemoved;
-
         //Color frame
         byte[] blackScreenData = null;
         KinectSensor sensor = null;
@@ -50,16 +48,16 @@ namespace Project
         int frameLoop = 0;
 
         //Applications
-        List<Proj_Application> runningApps;
-        Proj_Application onFocusApp;
+        public static AppManager Manager;
+
         public static Menu menu { get; private set; }//The only
 
         //Global controlunit
         public List<GlobalControlUnit> globalUnits;
 
         //Temp (Will be wrapped as a class)
-        public static ControlUnit dragging;
-        public static ControlUnit hovering;
+        public static ControlUnit dragging;//To point class (Hand)
+        public static ControlUnit hovering;//To point class (Hand)
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
@@ -78,16 +76,12 @@ namespace Project
             globalUnits = new List<GlobalControlUnit>();
             globalUnits.Add(new BotCenterMenu());
 
-            runningApps = new List<Proj_Application>();
-            list_ToBeRemoved = new List<Proj_Application>();
-            //At least one application will be run, which is the desktop
             menu = new Menu();
-            onFocusApp = new App_Desktop();
-            runningApps.Add(onFocusApp);
-            runningApps.Add(menu);
+            Manager = new AppManager();
 
             //Debug
-            runningApps.Add(new App_VideoPlayer("E:/School/CityU/221/SM3603/SM3603_Project/SampleVideos/277865651_138940418661949_6096681436469973289_n.mp4"));
+            //Manager.AddApp(new App_VideoPlayer("E:/School/CityU/221/SM3603/SM3603_Project/SampleVideos/277865651_138940418661949_6096681436469973289_n.mp4"));
+            Manager.AddApp(new App_FileExplorer());
         }
 
         //This following function is borrowed from course's slides
@@ -146,15 +140,16 @@ namespace Project
                 Point mousePos = Mouse.GetPosition(DrawingPlane);
 
                 //Print
-                foreach (Proj_Application app in runningApps.Reverse<Proj_Application>())
+                foreach (Proj_Application app in Manager.RunningApps.Reverse<Proj_Application>())
                 {
                     app.Print();
                 }
 
                 //GlobalUnit
-                int clampedX = mousePos.X < 0 ? 0 : mousePos.X > MainWindow.Drawing_Width ? MainWindow.Drawing_Width : (int)mousePos.X;
-                int clampedY = mousePos.Y < 0 ? 0 : mousePos.Y > MainWindow.Drawing_Height ? MainWindow.Drawing_Height : (int)mousePos.Y;
+                int clampedX = mousePos.X < 0 ? 0 : mousePos.X > Drawing_Width ? Drawing_Width : (int)mousePos.X;
+                int clampedY = mousePos.Y < 0 ? 0 : mousePos.Y > Drawing_Height ? Drawing_Height : (int)mousePos.Y;
 
+                Manager.Update(clampedX, clampedY);
                 foreach (GlobalControlUnit unit in globalUnits)
                 {
                     unit.IsHovering(clampedX, clampedY, Mouse.LeftButton);
@@ -162,13 +157,13 @@ namespace Project
                 }
 
                 //Update app
-                foreach (Proj_Application app in runningApps)
+                foreach (Proj_Application app in Manager.RunningApps)
                 {
                     //MousePos will be subtituded by handPos and MouseOnClicked will be subtituded by gesture
-                    app.Update(app == onFocusApp, mousePos, Mouse.LeftButton);
+                    app.Update(app == Manager.OnFocusApp, mousePos, Mouse.LeftButton);
                 }
 
-                //Trace.WriteLine("hovering: " + (hovering == null) + " " + (hovering is BotCenterMenu));
+                Trace.WriteLine("hovering: " + hovering + " | " + MainWindow.dragging + " timerOfHovering: " + timerOfHovering);
                 
 
                 if (timerOfHovering > 0)
@@ -180,38 +175,11 @@ namespace Project
                 }
 
                 //LateProcess (RemoveApp)
-                LateProcess();
+                Manager.LateProcess();
             }
 
             frameLoop++;
             if (frameLoop >= 30) frameLoop = 0;
-        }
-
-        public void RemoveFromApp(Proj_Application app)
-        {
-            list_ToBeRemoved.Add(app);
-        }
-
-        void LateProcess()
-        {
-            Late_RemoveApp();
-        }
-
-        void Late_RemoveApp()
-        {
-            for (int i = list_ToBeRemoved.Count - 1; i >= 0; i--)
-            {
-                runningApps.Remove(list_ToBeRemoved[i]);
-                list_ToBeRemoved.RemoveAt(i);
-            }
-        }
-
-        public void SetFocus(Proj_Application app)
-        {
-            onFocusApp = app;
-
-            //TODO: change the order of the list
-
         }
     }
 }

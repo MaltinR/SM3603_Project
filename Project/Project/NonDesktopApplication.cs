@@ -5,12 +5,15 @@ using System.Text;
 using System.Windows;
 using System.Windows.Input;
 using System.Windows.Media;
+using System.Windows.Media.Imaging;
 using System.Threading.Tasks;
 
 namespace Project
 {
     public class NonDesktopApplication : Proj_Application
     {
+        public BitmapImage Image_Normal { get; protected set; }
+        public BitmapImage Image_Selecting { get; protected set; }
         public bool IsFull { get; protected set; }
         public LocalEdgeControl LocalEdgeControl { get; protected set; }
         public int PosX { get; protected set; }//Top-left pos
@@ -81,6 +84,12 @@ namespace Project
             Rect = new Rect(PosX, PosY, Width, Height);
 
             LocalEdgeControl.UpdateRect();
+        }
+
+        //Be called when the app close
+        public virtual void OnClose()
+        {
+
         }
     }
 }

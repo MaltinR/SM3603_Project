@@ -29,10 +29,14 @@ namespace Project
     {
         public bool IsShowed { get; protected set; }
         public bool IsDragging { get; protected set; }
+        public ControlUnit[] controlUnits;
 
         public Menu()
         {
             Rect = new Rect(0, 0, MainWindow.Drawing_Width, MainWindow.Drawing_Height);
+
+            //App
+            controlUnits = new ControlUnit[] { new Menu_Calculator(this), new Menu_FileExplorer(this) };
         }
 
         public override void Print()
@@ -45,6 +49,14 @@ namespace Project
         {
             if ((!IsShowed) || (IsDragging)) return;
 
+            int clampedX = point.X < 0 ? 0 : point.X > MainWindow.Drawing_Width ? MainWindow.Drawing_Width : (int)point.X;
+            int clampedY = point.Y < 0 ? 0 : point.Y > MainWindow.Drawing_Height ? MainWindow.Drawing_Height : (int)point.Y;
+
+            foreach (ControlUnit unit in controlUnits)
+            {
+                unit.IsHovering(clampedX, clampedY, mouseState);
+                unit.Show(MainWindow.DrawingContext);
+            }
             //TODO: Icon to open
         }
 

@@ -15,7 +15,10 @@ namespace Project
         //Run per frame
 
         //For interactive
-        public abstract void Update(bool isFocusing, Point point, MouseButtonState mouseState);
+        public virtual void Update(bool isFocusing, Point point, MouseButtonState mouseState)
+        {
+
+        }
 
         //For visual
         public virtual void Print()

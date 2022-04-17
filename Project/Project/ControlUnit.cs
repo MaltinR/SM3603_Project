@@ -50,14 +50,14 @@ namespace Project
 
         }
 
-        public virtual bool InRange(int mousePosX, int mousePosY)
+        public virtual bool InRange(int mousePosX, int mousePosY, int listOrder)
         {
             return mousePosX > PosX && mousePosX < PosX + Width &&
                 mousePosY > PosY && mousePosY < PosY + Height;
         }
 
         //Check is dragging and hovering
-        public virtual bool IsHoveringOrDragging(int mousePosX, int mousePosY, MouseButtonState mouseState)
+        public virtual bool IsHoveringOrDragging(int mousePosX, int mousePosY, int listOrder, MouseButtonState mouseState)
         {
             isHoveringOrDragging = false;
             if (MainWindow.dragging == this)
@@ -76,7 +76,7 @@ namespace Project
 
             //Please make sure it doesnt have overlap problem
             //Otherwise MainWindow.hovering will have a incorrect value
-            if ((MainWindow.hovering == null || MainWindow.hovering == this) && MainWindow.dragging == null && InRange(mousePosX, mousePosY))
+            if ((MainWindow.hovering == null || MainWindow.hovering == this) && MainWindow.dragging == null && InRange(mousePosX, mousePosY, listOrder))
             {
                 //TODO each point should have an individual timer and class
                 if (HoveringTime > 0 && MainWindow.hovering == this && ++MainWindow.timerOfHovering >= HoveringTime)
@@ -133,10 +133,20 @@ namespace Project
         public bool IsShowThisFrame { get; protected set; } //To avoid render problem
         public NonDesktopApplication Parent { get; protected set; }
 
-        public override bool InRange(int mousePosX, int mousePosY)
+        public override bool InRange(int mousePosX, int mousePosY, int listOrder)
         {
-            return mousePosX > PosX + Parent.PosX && mousePosX < PosX + Parent.PosX + Width &&
+            bool isInRange = mousePosX > PosX + Parent.PosX && mousePosX < PosX + Parent.PosX + Width &&
                 mousePosY > PosY + Parent.PosY && mousePosY < PosY + Parent.PosY + Height;
+
+            if(MainWindow.Manager.RunningApps.Count > 0)
+            {
+                for (int i = 0;i < listOrder;i++)
+                {
+                    isInRange &= (mousePosX < MainWindow.Manager.RunningApps[i].PosX || mousePosX > MainWindow.Manager.RunningApps[i].PosX + MainWindow.Manager.RunningApps[i].Width) || (mousePosY < MainWindow.Manager.RunningApps[i].PosY || mousePosY > MainWindow.Manager.RunningApps[i].PosY + MainWindow.Manager.RunningApps[i].Height);
+                }
+            }
+
+            return isInRange;
         }
 
         public override void UpdateRect()
@@ -329,8 +339,6 @@ namespace Project
 
         protected override void OnRelease(int mousePosX, int mousePosY)
         {
-            Trace.WriteLine("mousePosY: " + mousePosY + " Drawing_Height: " + MainWindow.Drawing_Height + " /2 : " + (MainWindow.Drawing_Height / 2));
-
             MainWindow.Manager.Menu.SetDrag(false);
 
             //Check if is half
@@ -359,10 +367,10 @@ namespace Project
             Rect = new Rect(PosX, PosY, Width, Height);
         }
 
-        public override bool IsHoveringOrDragging(int mousePosX, int mousePosY, MouseButtonState mouseState)
+        public override bool IsHoveringOrDragging(int mousePosX, int mousePosY, int listOrder, MouseButtonState mouseState)
         {
             MainWindow.Manager.Menu.pendingPercent = -1;
-            return base.IsHoveringOrDragging(mousePosX, mousePosY, mouseState);
+            return base.IsHoveringOrDragging(mousePosX, mousePosY, listOrder, mouseState);
         }
 
         //TODO: needs UpdateRect as well when changing the window
@@ -404,7 +412,17 @@ namespace Project
             Width = 50;
             Height = 50;
             PosX = MainWindow.Drawing_Width - Width;
-            PosY = MainWindow.Drawing_Height / 2 - Height * MainWindow.Manager.RunningAppIcons.Count / 2 + MainWindow.Manager.RunningAppIcons.IndexOf(MainWindow.Manager.RunningAppIcons.Find(x => x.CorrespondingApp == CorrespondingApp)) * Height;
+
+            if (MainWindow.Manager.Switcher.RunningAppIcons.Count <= 5)
+            {
+                PosY = MainWindow.Drawing_Height / 2 - Height * MainWindow.Manager.Switcher.RunningAppIcons.Count / 2 + MainWindow.Manager.Switcher.RunningAppIcons.IndexOf(this) * Height;
+            }
+            else
+            {
+                MainWindow.Manager.Switcher.RunningAppIcons.IndexOf(MainWindow.Manager.Switcher.RunningAppIcons.Find(x => x.CorrespondingApp == CorrespondingApp));
+
+                PosY = MainWindow.Manager.Switcher.MiddleRightSlideBar.PosY + ((MainWindow.Manager.Switcher.RunningAppIcons.IndexOf(this) - MainWindow.Manager.Switcher.Start) * 50);
+            }
 
             Rect = new Rect(PosX, PosY, Width, Height);
         }
@@ -412,39 +430,51 @@ namespace Project
         protected override void Dragging(int mousePosX, int mousePosY)
         {
             //Change the dragging target to slide bar
-            MainWindow.dragging = MainWindow.Manager.MiddleRightSlideBar;
+            MainWindow.dragging = MainWindow.Manager.Switcher.MiddleRightSlideBar;
         }
     }
 
     public class MiddleRightSlideBar : GlobalControlUnit
     {
-        double percent;
         //Wake when drag on the MiddleLeftElement
         public MiddleRightSlideBar()
         {
             Width = 50;
-            Height = 250;//Flexible to the number of running app
+            Height = 250;
             PosX = MainWindow.Drawing_Width - 50;
             PosY = MainWindow.Drawing_Height / 2 - Height / 2;
 
             UpdateRect();
         }
 
-        public override bool IsHoveringOrDragging(int mousePosX, int mousePosY, MouseButtonState mouseState)
+        public override bool IsHoveringOrDragging(int mousePosX, int mousePosY, int listOrder, MouseButtonState mouseState)
         {
-            //We don't check hovering, just check if it is dragging
-            if (MainWindow.dragging == this || MainWindow.hovering == this)
+            if (MainWindow.dragging == this)
             {
-                MainWindow.hovering = null;
-                if (mouseState == MouseButtonState.Pressed && InRange(mousePosX, mousePosY))
+                if (mouseState == MouseButtonState.Pressed)
                 {
-                    MainWindow.dragging = this;
+                    Dragging(mousePosX, mousePosY);
+                    isHoveringOrDragging = true;
                     return true;
                 }
                 else
                 {
+                    OnRelease(mousePosX, mousePosY);
                     MainWindow.dragging = null;
+                    isHoveringOrDragging = false;
                     return false;
+                }
+            }
+            //We don't check hovering, just check if it is dragging
+            if (MainWindow.hovering == this)
+            {
+                MainWindow.hovering = null;
+                if (mouseState == MouseButtonState.Pressed && InRange(mousePosX, mousePosY, listOrder))
+                {
+                    Dragging(mousePosX, mousePosY);
+                    isHoveringOrDragging = true;
+                    MainWindow.dragging = this;
+                    return true;
                 }
             }
             return false;
@@ -452,27 +482,368 @@ namespace Project
 
         protected override void Dragging(int mousePosX, int mousePosY)
         {
-            //TODO: Code of slide, return if dont have to slide
-
-            if (MainWindow.Manager.RunningAppIcons.Count <= 5)
+            if (MainWindow.Manager.Switcher.RunningAppIcons.Count <= 5)
                 return;
             else
             {
-                percent = (Height - (mousePosY - PosY))/ Height;
-                percent = percent < 0 ? 0 : percent > 1 ? 1 : percent;
+                //Percent Height = (Total - 5)/Total*Height
+
+                MainWindow.Manager.Switcher.height = (MainWindow.Manager.Switcher.RunningAppIcons.Count - 5) / (double)MainWindow.Manager.Switcher.RunningAppIcons.Count* Height;
+                
+                MainWindow.Manager.Switcher.percent = (mousePosY - (PosY + (Height - MainWindow.Manager.Switcher.height) /2))/ MainWindow.Manager.Switcher.height;
+                MainWindow.Manager.Switcher.percent = MainWindow.Manager.Switcher.percent < 0 ? 0 : MainWindow.Manager.Switcher.percent > 1 ? 1 : MainWindow.Manager.Switcher.percent;
             }
         }
 
         public override void Print()
         {
-            if(MainWindow.dragging == this)
+            if(MainWindow.dragging == this && MainWindow.Manager.Switcher.RunningAppIcons.Count > 5)
             {
                 //Cal the size
 
-                int height = (int)(5 / (double)MainWindow.Manager.RunningAppIcons.Count);
+                int height = (int)(5 / (double)MainWindow.Manager.Switcher.RunningAppIcons.Count * Height);
 
                 MainWindow.RenderManager.DrawingContext.DrawRectangle(Brushes.Gray, null,
-                new Rect(MainWindow.Drawing_Width - 54, PosY + percent * (Height - height), 4, height));
+                new Rect(MainWindow.Drawing_Width - 54, PosY + MainWindow.Manager.Switcher.percent * MainWindow.Manager.Switcher.height, 4, height));
+            }
+        }
+    }
+
+    public class Image_ChannelR : Image_Channel
+    {
+        public Image_ChannelR(App_ImageEditor imageEditor, Image_ChannelSlider slider)
+        {
+            Parent = imageEditor;
+            Slider = slider;
+
+            PosY = 50;
+            Width = 30;
+            Height = 30;
+
+            Rect = new Rect(PosX, PosY, Width, Height);
+        }
+    }
+
+    public class Image_ChannelG : Image_Channel
+    {
+        public Image_ChannelG(App_ImageEditor imageEditor, Image_ChannelSlider slider)
+        {
+            Parent = imageEditor;
+            Slider = slider;
+
+            PosY = 80;
+            Width = 30;
+            Height = 30;
+
+            Rect = new Rect(PosX, PosY, Width, Height);
+        }
+    }
+
+    public class Image_ChannelB : Image_Channel
+    {
+        public Image_ChannelB(App_ImageEditor imageEditor, Image_ChannelSlider slider)
+        {
+            Parent = imageEditor;
+            Slider = slider;
+
+            PosY = 110;
+            Width = 30;
+            Height = 30;
+
+            Rect = new Rect(PosX, PosY, Width, Height);
+        }
+    }
+
+    public class Image_ChannelSize : Image_Channel
+    {
+        public Image_ChannelSize(App_ImageEditor imageEditor, Image_ChannelSlider slider)
+        {
+            Parent = imageEditor;
+            Slider = slider;
+
+            PosY = 140;
+            Width = 30;
+            Height = 30;
+
+            Rect = new Rect(PosX, PosY, Width, Height);
+        }
+    }
+    public class Image_ChannelSliderR : Image_ChannelSlider
+    {
+        public Image_ChannelSliderR(App_ImageEditor imageEditor)
+        {
+            Parent = imageEditor;
+
+            PosY = 50;
+            Width = 150;
+            Height = 30;
+
+            Rect = new Rect(PosX, PosY, Width, Height);
+        }
+
+        protected override void Dragging(int mousePosX, int mousePosY)
+        {
+            base.Dragging(mousePosX, mousePosY);
+            (Parent as App_ImageEditor).Channel_R = (int)(255 * _percent);
+        }
+    }
+    public class Image_ChannelSliderG : Image_ChannelSlider
+    {
+        public Image_ChannelSliderG(App_ImageEditor imageEditor)
+        {
+            Parent = imageEditor;
+
+            PosY = 80;
+            Width = 150;
+            Height = 30;
+
+            Rect = new Rect(PosX, PosY, Width, Height);
+        }
+
+        protected override void Dragging(int mousePosX, int mousePosY)
+        {
+            base.Dragging(mousePosX, mousePosY);
+            (Parent as App_ImageEditor).Channel_G = (int)(255 * _percent);
+        }
+    }
+
+    public class Image_ChannelSliderB : Image_ChannelSlider
+    {
+        public Image_ChannelSliderB(App_ImageEditor imageEditor)
+        {
+            Parent = imageEditor;
+
+            PosY = 110;
+            Width = 150;
+            Height = 30;
+
+            Rect = new Rect(PosX, PosY, Width, Height);
+        }
+
+        protected override void Dragging(int mousePosX, int mousePosY)
+        {
+            base.Dragging(mousePosX, mousePosY);
+            (Parent as App_ImageEditor).Channel_B = (int)(255 * _percent);
+        }
+    }
+    public class Image_ChannelSliderSize : Image_ChannelSlider
+    {
+        public Image_ChannelSliderSize(App_ImageEditor imageEditor)
+        {
+            Parent = imageEditor;
+
+            PosY = 140;
+            Width = 150;
+            Height = 30;
+
+            Rect = new Rect(PosX, PosY, Width, Height);
+        }
+
+        protected override void Dragging(int mousePosX, int mousePosY)
+        {
+            base.Dragging(mousePosX, mousePosY);
+            (Parent as App_ImageEditor).BrushSize = (int)(99 * _percent) + 1;
+        }
+    }
+
+    //RGB & Size
+    public class Image_Channel : LocalControlUnit
+    {
+        public Image_ChannelSlider Slider {get; protected set; }
+        protected override void Dragging(int mousePosX, int mousePosY)
+        {
+            MainWindow.dragging = Slider;
+        }
+
+        public override void Print()
+        {
+            //For Test
+            MainWindow.RenderManager.DrawingContext.DrawRectangle(Brushes.Gray, null, Rect);
+        }
+    }
+
+    public class Image_ChannelSlider : LocalControlUnit_SlideBar
+    {
+        protected double _percent;
+        protected override void Dragging(int mousePosX, int mousePosY)
+        {
+            _percent = (mousePosX - (Parent.PosX + 5)) / (double)(Width - 10);
+            _percent = _percent < 0 ? 0 : _percent > 1 ? 1 : _percent;
+        }
+        public override void Print()
+        {
+            MainWindow.RenderManager.DrawingContext.DrawRectangle(Brushes.DarkGray, null, Rect);
+            //Bar
+            MainWindow.RenderManager.DrawingContext.DrawRectangle(Brushes.Black, null, new Rect(Parent.PosX + PosX + 5, Parent.PosY + PosY + (Height / 2) - 2, Width - 10, 4));
+            //Button
+            MainWindow.RenderManager.DrawingContext.DrawRectangle(Brushes.Gray, null, new Rect(Parent.PosX + PosX + 5 + (_percent * (Width - 10 - 4)), Parent.PosY + PosY + (Height / 2) - 6, 4, 12));
+        }
+    }
+
+    public class File_Subject : LocalControlUnit
+    {
+        public int IndexFromView { get; private set; }
+
+        public File_Subject(App_FileExplorer parent, int index, int startPos, int height, bool enableHover)
+        {
+            Parent = parent;
+            IndexFromView = index;
+
+            HoveringTime = enableHover?60:-1;
+
+            PosX = 50;
+            PosY = startPos;
+            Width = Parent.Width - 100;
+            Height = height;
+
+            UpdateRect();
+        }
+
+        protected override void Hovering(int mousePosX, int mousePosY)
+        {
+            (Parent as App_FileExplorer).highlighting = IndexFromView;
+        }
+        protected override void Dragging(int mousePosX, int mousePosY)
+        {
+            //Change the dragging target to slide bar
+            MainWindow.dragging = (Parent as App_FileExplorer).SlideBar;
+        }
+
+        protected override void HoverTimesUp(int mousePosX, int mousePosY)
+        {
+            //Open
+            //Call parent's function
+            (Parent as App_FileExplorer).Open(IndexFromView);
+
+            //MainWindow.dragging = null;
+            //MainWindow.hovering = null;
+        }
+
+        public void SetHoveringTime(bool isHover)
+        {
+            HoveringTime = isHover?60:-1;
+        }
+    }
+
+    public class LocalControlUnit_SlideBar : LocalControlUnit
+    {
+        public override bool IsHoveringOrDragging(int mousePosX, int mousePosY, int listOrder, MouseButtonState mouseState)
+        {
+            if (MainWindow.dragging == this)
+            {
+                if (mouseState == MouseButtonState.Pressed)
+                {
+                    Dragging(mousePosX, mousePosY);
+                    isHoveringOrDragging = true;
+                    return true;
+                }
+                else
+                {
+                    OnRelease(mousePosX, mousePosY);
+                    MainWindow.dragging = null;
+                    isHoveringOrDragging = false;
+                    return false;
+                }
+            }
+            //We don't check hovering, just check if it is dragging
+            if (MainWindow.hovering == this)
+            {
+                MainWindow.hovering = null;
+                if (mouseState == MouseButtonState.Pressed && InRange(mousePosX, mousePosY, listOrder))
+                {
+                    Dragging(mousePosX, mousePosY);
+                    isHoveringOrDragging = true;
+                    MainWindow.dragging = this;
+                    return true;
+                }
+            }
+            return false;
+        }
+    }
+
+    public class File_SlideBar : LocalControlUnit_SlideBar
+    {
+        //Wake when drag on the MiddleLeftElement
+        public File_SlideBar(App_FileExplorer parent)
+        {
+            Parent = parent;
+            PosX = 0;
+            PosY = 50;
+            Width = Parent.Width - 40;
+            Height = (Parent.Height - PosY) / (Parent as App_FileExplorer).RowSize * (Parent as App_FileExplorer).RowSize;
+
+            UpdateRect();
+        }
+
+        public override bool IsHoveringOrDragging(int mousePosX, int mousePosY, int listOrder, MouseButtonState mouseState)
+        {
+            if (MainWindow.dragging == this)
+            {
+                if (mouseState == MouseButtonState.Pressed)
+                {
+                    Dragging(mousePosX, mousePosY);
+                    isHoveringOrDragging = true;
+                    return true;
+                }
+                else
+                {
+                    OnRelease(mousePosX, mousePosY);
+                    MainWindow.dragging = null;
+                    isHoveringOrDragging = false;
+                    return false;
+                }
+            }
+            //We don't check hovering, just check if it is dragging
+            if (MainWindow.hovering == this)
+            {
+                MainWindow.hovering = null;
+                if (mouseState == MouseButtonState.Pressed && InRange(mousePosX, mousePosY, listOrder))
+                {
+                    Dragging(mousePosX, mousePosY);
+                    isHoveringOrDragging = true;
+                    MainWindow.dragging = this;
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        protected override void Dragging(int mousePosX, int mousePosY)
+        {
+            int sumInDir = (Parent as App_FileExplorer).CurrentFiles.Length + (Parent as App_FileExplorer).CurrentFolders.Length;
+            if (sumInDir <= (Parent as App_FileExplorer).MaxRowCount)
+                return;
+            else
+            {
+                //Percent Height = (Total - RowCount)/Total*Height
+
+                (Parent as App_FileExplorer).SlideBarHeight = (int)((sumInDir - (Parent as App_FileExplorer).MaxRowCount) / (double)sumInDir * Height);
+
+                (Parent as App_FileExplorer).SlideBarPercent = (mousePosY - (Parent.PosY + PosY + (Parent as App_FileExplorer).SlideBarHeight / 2)) / (double)(Parent as App_FileExplorer).SlideBarHeight;
+                (Parent as App_FileExplorer).SlideBarPercent = (Parent as App_FileExplorer).SlideBarPercent < 0 ? 0 : (Parent as App_FileExplorer).SlideBarPercent > 1 ? 1 : (Parent as App_FileExplorer).SlideBarPercent;
+
+                (Parent as App_FileExplorer).Scroll();
+            }
+        }
+
+        public override void UpdateRect()
+        {
+            Width = Parent.Width - 40;
+            Height = (Parent.Height - PosY) / (Parent as App_FileExplorer).RowSize * (Parent as App_FileExplorer).RowSize;
+            base.UpdateRect();
+        }
+
+        public override void Print()
+        {
+            int sumInDir = (Parent as App_FileExplorer).CurrentFiles.Length + (Parent as App_FileExplorer).CurrentFolders.Length;
+            if (MainWindow.dragging == this && (Parent as App_FileExplorer).MaxRowCount <= sumInDir)
+            {
+                //Cal the size
+
+                int height = (int)((Parent as App_FileExplorer).MaxRowCount / (double)sumInDir * Height);
+
+                MainWindow.RenderManager.DrawingContext.DrawRectangle(Brushes.Gray, null,
+                new Rect(Parent.PosX, Parent.PosY + PosY + (Parent as App_FileExplorer).SlideBarPercent * (Parent as App_FileExplorer).SlideBarHeight, 4, height));
             }
         }
     }
@@ -513,22 +884,13 @@ namespace Project
 
             (Parent as App_VideoPlayer).player.Position = TimeSpan.FromSeconds(percent * (Parent as App_VideoPlayer).player.NaturalDuration.TimeSpan.TotalSeconds);
 
-            //MainWindow.RenderManager.DrawingContext.DrawRectangle(Brushes.White, null, rect_TimeLine);
-            /*
-            MainWindow.RenderManager.DrawingContext.DrawRectangle(Brushes.Gray, null,
-                new Rect((Parent.PosX + PosX) + (percent * Width - 4),
-                (Parent.PosY + PosY) + Height / 2 + 20 - 6, 4, 12)
-                );
-            */
-
-            draggingDetail.rect_TimeButton = new Rect((Parent.PosX + PosX) + (percent * Width - 4),
-                (Parent.PosY + PosY) + Height / 2 + 20 - 6, 4, 12);
+            draggingDetail.rect_TimeButton = new Rect((Parent.PosX + PosX) + (percent * Width - 4), (Parent.PosY + PosY) + Height / 2 + 20 - 6, 4, 12);
         }
 
-        public override bool IsHoveringOrDragging(int mousePosX, int mousePosY, MouseButtonState mouseState)
+        public override bool IsHoveringOrDragging(int mousePosX, int mousePosY, int listOrder, MouseButtonState mouseState)
         {
             draggingDetail.isShow = false;
-            return base.IsHoveringOrDragging(mousePosX, mousePosY, mouseState);
+            return base.IsHoveringOrDragging(mousePosX, mousePosY, listOrder, mouseState);
         }
 
         public override void UpdateRect()
@@ -544,6 +906,8 @@ namespace Project
 
         public override void Print()
         {
+            if (!draggingDetail.isShow) return;
+
             base.Print();
 
             MainWindow.RenderManager.DrawingContext.DrawRectangle(Brushes.White, null, rect_TimeLine);
@@ -591,21 +955,13 @@ namespace Project
             double percent = timePos / (double)Height;
 
             (Parent as App_VideoPlayer).player.Volume = 1.0 - percent;
-
-            /*
-            MainWindow.RenderManager.DrawingContext.DrawImage(Image_Volume, rect_Volume_Icon);
-            MainWindow.RenderManager.DrawingContext.DrawRectangle(Brushes.White, null, rect_Volume);
-            MainWindow.RenderManager.DrawingContext.DrawRectangle(Brushes.Gray, null,
-                new Rect((Parent.PosX + PosX) + Width * 0.75 - 6,
-                (Parent.PosY + PosY) + Height * percent, 12, 4)
-                );
-            */
+            draggingDetail.rect_VolumeButton = new Rect((Parent.PosX + PosX) + Width * 0.75 - 6, (Parent.PosY + PosY) + (percent * Height - 4) , 12, 4);
         }
 
-        public override bool IsHoveringOrDragging(int mousePosX, int mousePosY, MouseButtonState mouseState)
+        public override bool IsHoveringOrDragging(int mousePosX, int mousePosY, int listOrder, MouseButtonState mouseState)
         {
             draggingDetail.isShow = false;
-            return base.IsHoveringOrDragging(mousePosX, mousePosY, mouseState);
+            return base.IsHoveringOrDragging(mousePosX, mousePosY, listOrder, mouseState);
         }
 
         public override void UpdateRect()
@@ -620,12 +976,9 @@ namespace Project
         }
         public override void Print()
         {
-            base.Print();
+            if (!draggingDetail.isShow) return;
 
-            /*
-            MainWindow.RenderManager.DrawingContext.DrawRectangle(Brushes.White, null, rect_TimeLine);
-            MainWindow.RenderManager.DrawingContext.DrawRectangle(Brushes.Gray, null, draggingDetail.rect_VolumeButton);
-            */
+            base.Print();
 
             MainWindow.RenderManager.DrawingContext.DrawImage(Image_Volume, rect_Volume_Icon);
             MainWindow.RenderManager.DrawingContext.DrawRectangle(Brushes.White, null, rect_Volume);

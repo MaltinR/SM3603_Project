@@ -45,6 +45,11 @@ namespace Project
             if (!((!IsShowed) || (IsDragging)))
             {
                 MainWindow.RenderManager.DrawingContext.DrawRectangle(Brushes.Gray, null, Rect);
+
+                foreach (ControlUnit unit in controlUnits)
+                {
+                    unit.Show(MainWindow.RenderManager.DrawingContext);
+                }
             }
 
             botCenterMenu.Show(MainWindow.RenderManager.DrawingContext);
@@ -55,16 +60,14 @@ namespace Project
             int clampedX = point.X < 0 ? 0 : point.X > MainWindow.Drawing_Width ? MainWindow.Drawing_Width : (int)point.X;
             int clampedY = point.Y < 0 ? 0 : point.Y > MainWindow.Drawing_Height ? MainWindow.Drawing_Height : (int)point.Y;
 
-            botCenterMenu.IsHoveringOrDragging(clampedX, clampedY, Mouse.LeftButton);
+            botCenterMenu.IsHoveringOrDragging(clampedX, clampedY, 0, Mouse.LeftButton);
 
             if ((!IsShowed) || (IsDragging)) return;
 
             foreach (ControlUnit unit in controlUnits)
             {
-                unit.IsHoveringOrDragging(clampedX, clampedY, mouseState);
-                unit.Show(MainWindow.RenderManager.DrawingContext);
+                unit.IsHoveringOrDragging(clampedX, clampedY, 0, mouseState);
             }
-            //TODO: Icon to open
         }
 
         public void SetShow(bool isShow)

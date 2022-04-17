@@ -37,16 +37,18 @@ namespace Project
             app_AspectRatio = Width / (double)Height;
         }
 
-        public override void Update(bool isFocusing, Point point, MouseButtonState mouseState)
+        public override void Update(bool isFocusing, int listOrder, Point point, MouseButtonState mouseState)
         {
-            base.Update(isFocusing, point, mouseState);
+            base.Update(isFocusing, listOrder, point, mouseState);
+
+            if (!isFocusing) return;
 
             int clampedX = point.X < 0 ? 0 : point.X > MainWindow.Drawing_Width ? MainWindow.Drawing_Width : (int)point.X;
             int clampedY = point.Y < 0 ? 0 : point.Y > MainWindow.Drawing_Height ? MainWindow.Drawing_Height : (int)point.Y;
 
             foreach (LocalControlUnit unit in controlZones)
             {
-                unit.IsHoveringOrDragging(clampedX, clampedY, mouseState);
+                unit.IsHoveringOrDragging(clampedX, clampedY, listOrder, mouseState);
             }
         }
 
@@ -59,25 +61,31 @@ namespace Project
             {
                 if(player.NaturalVideoWidth != 0)
                     video_AspectRatio = player.NaturalVideoWidth / (double)player.NaturalVideoHeight;
+            }
+
+            if (video_AspectRatio != 0)
+            {
+                if (video_AspectRatio > app_AspectRatio)
+                {
+                    //Up and Down
+
+                    //Cal the video height
+                    double video_Height = Width / video_AspectRatio;
+                    MainWindow.RenderManager.DrawingContext.DrawVideo(player, new Rect(PosX, PosY + (Height - video_Height) / 2, Width, video_Height));
+                }
                 else
-                    return;
+                {
+                    //Left and Right
+
+                    //Cal the video width
+                    double video_Width = Height * video_AspectRatio;
+                    MainWindow.RenderManager.DrawingContext.DrawVideo(player, new Rect(PosX + (Width - video_Width) / 2, PosY, video_Width, Height));
+                }
             }
 
-            if (video_AspectRatio > app_AspectRatio)
+            foreach (LocalControlUnit unit in controlZones)
             {
-                //Up and Down
-
-                //Cal the video height
-                double video_Height = Width / video_AspectRatio;
-                MainWindow.RenderManager.DrawingContext.DrawVideo(player, new Rect(PosX, PosY + (Height - video_Height) / 2, Width, video_Height));
-            }
-            else
-            {
-                //Left and Right
-
-                //Cal the video width
-                double video_Width = Height * video_AspectRatio;
-                MainWindow.RenderManager.DrawingContext.DrawVideo(player, new Rect(PosX + (Width - video_Width) / 2, PosY, video_Width, Height));
+                unit.Print();
             }
 
             LocalEdgeControl.Print();

@@ -65,9 +65,9 @@ namespace Project
             UpdateRect();
         }
 
-        public override void Update(bool isFocusing, Point point, MouseButtonState mouseState)
+        public virtual void Update(bool isFocusing, int listOrder, Point point, MouseButtonState mouseState)
         {
-            LocalEdgeControl.CheckShow(point, MainWindow.RenderManager.DrawingContext, mouseState);
+            LocalEdgeControl.CheckShow(point, listOrder, MainWindow.RenderManager.DrawingContext, mouseState);
         }
 
         public override void Print()

@@ -74,13 +74,10 @@ namespace Project
             RenderManager.RenderList.Add(new RenderManager.RenderClass(Manager.Menu));
 
             //Debug
-            Manager.AddApp(new App_VideoPlayer("E:/School/CityU/221/SM3603/SM3603_Project/SampleVideos/277957136_1030137967586408_6026758252614106551_n.mp4"));
-            Manager.AddApp(new App_FileExplorer());
-            Manager.AddApp(new App_FileExplorer());
-            Manager.AddApp(new App_FileExplorer());
-            Manager.AddApp(new App_FileExplorer());
-            Manager.AddApp(new App_FileExplorer());
-            Manager.AddApp(new App_FileExplorer());
+            //Manager.AddApp(new App_VideoPlayer("E:/School/CityU/221/SM3603/SM3603_Project/SampleVideos/277957136_1030137967586408_6026758252614106551_n.mp4"));
+            //Manager.AddApp(new App_VideoPlayer("E:/School/CityU/221/SM3603/SM3603_Project/SampleVideos/277957136_1030137967586408_6026758252614106551_n.mp4"));
+            //Manager.AddApp(new App_FileExplorer());
+            Manager.AddApp(new App_ImageEditor("E:/School/CityU/221/SM3603/SM3603_Project/Test.png"));
         }
 
         //This following function is borrowed from course's slides
@@ -142,8 +139,6 @@ namespace Project
                 Manager.Update(clampedX, clampedY, mousePos);
 
                 RenderManager.Render();
-
-                Trace.WriteLine("hovering: " + hovering + " | " + dragging + " timerOfHovering: " + timerOfHovering);
 
                 if (timerOfHovering > 0)
                 {

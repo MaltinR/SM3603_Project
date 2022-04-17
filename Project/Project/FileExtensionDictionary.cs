@@ -61,6 +61,8 @@ namespace Project
 
         public static AppEnum GetEnum(string ext)
         {
+            ext = ext.ToLower();
+
             AppEnum appEnum;
             if (!Dictionary.TryGetValue(ext, out appEnum))
             {

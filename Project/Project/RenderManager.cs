@@ -33,17 +33,14 @@ namespace Project
         public void Render()
         {
             //System.Diagnostics.Trace.WriteLine("===New Frame===");
-            //System.Diagnostics.Trace.WriteLine("RunningApps " + MainWindow.Manager.RunningApps.Count);
             //0 Top-most
             //App
             foreach (NonDesktopApplication app in MainWindow.Manager.RunningApps.Reverse<NonDesktopApplication>())
             {
-                //System.Diagnostics.Trace.WriteLine("App");
                 app.Print();
             }
             MainWindow.Manager.Menu.Print();
 
-            //TODO: Move Print() of icon to here
             MainWindow.Manager.Switcher.Print();
         }
 

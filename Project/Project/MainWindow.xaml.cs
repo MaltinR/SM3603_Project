@@ -12,8 +12,10 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
-using Microsoft.Kinect;
 using System.Diagnostics;
+using Microsoft.Speech.AudioFormat;
+using Microsoft.Speech.Recognition;
+using Microsoft.Kinect;
 
 namespace Project
 {
@@ -43,6 +45,10 @@ namespace Project
         FrameDescription colorFrameDescription = null;
         byte[] colorData = null;
 
+        //Voice Reg
+        private RecognizerInfo kinectRecognizerInfo;
+        public static SpeechRecognitionEngine Recognizer { get; private set; } 
+
         //Debug
         int frameLoop = 0;
 
@@ -54,6 +60,8 @@ namespace Project
         //Temp (Will be wrapped as a class)
         public static ControlUnit dragging;//To point class (Hand)
         public static ControlUnit hovering;//To point class (Hand)
+
+        SpeechRecognizedEventArgs _lastFrameSpeech;
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
@@ -73,11 +81,47 @@ namespace Project
 
             RenderManager.RenderList.Add(new RenderManager.RenderClass(Manager.Menu));
 
+            kinectRecognizerInfo = FindKinectRecognizerInfo();
+            if (kinectRecognizerInfo != null)
+            {
+                Recognizer = new SpeechRecognitionEngine(kinectRecognizerInfo);
+            }
+
+            //BuildCommands();
+            BuildGrammar();
+
+            IReadOnlyList<AudioBeam> audioBeamList = sensor.AudioSource.AudioBeams;
+            System.IO.Stream audioStream = audioBeamList[0].OpenInputStream();
+
+            T11_VoiceControl.KinectAudioStream kinectAudioStream = new T11_VoiceControl.KinectAudioStream(audioStream);
+            // let the convertStream know speech is going active
+            kinectAudioStream.SpeechActive = true;
+
+            if (true)//Debug: true = normal mic, false = kinect mic
+            {
+                Recognizer.SetInputToDefaultAudioDevice();
+            }
+            else
+            {
+                Recognizer.SetInputToAudioStream(kinectAudioStream, new SpeechAudioFormatInfo(EncodingFormat.Pcm, 16000, 16, 1, 32000, 2, null));
+            }
+
+            // recognize words repeatedly and asynchronously
+            Recognizer.RecognizeAsync(RecognizeMode.Multiple);
+
+            Recognizer.SpeechRecognized += Recognizer_SpeechRecognized;
+
             //Debug
             //Manager.AddApp(new App_VideoPlayer("E:/School/CityU/221/SM3603/SM3603_Project/SampleVideos/277957136_1030137967586408_6026758252614106551_n.mp4"));
             //Manager.AddApp(new App_VideoPlayer("E:/School/CityU/221/SM3603/SM3603_Project/SampleVideos/277957136_1030137967586408_6026758252614106551_n.mp4"));
-            //Manager.AddApp(new App_FileExplorer());
-            Manager.AddApp(new App_ImageEditor("E:/School/CityU/221/SM3603/SM3603_Project/Test.png"));
+            Manager.AddApp(new App_FileExplorer());
+            //Manager.AddApp(new App_ImageEditor("E:/School/CityU/221/SM3603/SM3603_Project/Test.png"));
+        }
+        private void Recognizer_SpeechRecognized(object sender, SpeechRecognizedEventArgs e)
+        {
+            if (e.Result.Confidence > 0.6)
+                _lastFrameSpeech = e;
+            Trace.WriteLine(e.Result.Text + " (" + e.Result.Confidence + ")");
         }
 
         //This following function is borrowed from course's slides
@@ -122,7 +166,6 @@ namespace Project
 
         private void ColorFrameReader_FrameArrived(object sender, ColorFrameArrivedEventArgs e)
         {
-
             using (DrawingContext dc = drawingGroup.Open())
             {
                 RenderManager.DrawingContext = dc;
@@ -136,11 +179,12 @@ namespace Project
                 int clampedX = mousePos.X < 0 ? 0 : mousePos.X > Drawing_Width ? Drawing_Width : (int)mousePos.X;
                 int clampedY = mousePos.Y < 0 ? 0 : mousePos.Y > Drawing_Height ? Drawing_Height : (int)mousePos.Y;
 
-                Manager.Update(clampedX, clampedY, mousePos);
+                Manager.Update(clampedX, clampedY, mousePos, _lastFrameSpeech);
 
                 RenderManager.Render();
 
                 if (timerOfHovering > 0)
+                //if (timerOfHovering > 0 && hovering != null)
                 {
                     int scale_Hold = (int)(timerOfHovering / (double)hovering.HoveringTime * 50.0);
 
@@ -153,10 +197,88 @@ namespace Project
 
                 //LateProcess (RemoveApp)
                 Manager.LateProcess();
+
+                //After used, to prevent next frame repeat
+                _lastFrameSpeech = null;
             }
 
             frameLoop++;
             if (frameLoop >= 30) frameLoop = 0;
+        }
+
+        //Reference: Course Slide: SM3603-Topic11
+        private RecognizerInfo FindKinectRecognizerInfo()
+        {
+            var recognizers = SpeechRecognitionEngine.InstalledRecognizers();
+
+            foreach (RecognizerInfo recInfo in recognizers)
+            {
+                // look at each recognizer info value 
+                // to find the one that works for Kinect
+                if (recInfo.AdditionalInfo.ContainsKey("Kinect"))
+                {
+                    string details = recInfo.AdditionalInfo["Kinect"];
+                    if (details == "True" && recInfo.Culture.Name == "en-US")
+                    {
+                        // If we get here we have found 
+                        // the info we want to use
+                        return recInfo;
+                    }
+                }
+            }
+            return null;
+        }
+
+
+        public void BuildNewGrammar(Grammar grammar) // call it Window_Loaded()
+        {
+            Recognizer.LoadGrammar(grammar);
+        }
+
+        public static Grammar GetGrammar(string str_GrammarBuilder, string[] options)
+        {
+            GrammarBuilder grammarBuilder;
+            if (str_GrammarBuilder.Length == 0)
+            {
+                grammarBuilder = new GrammarBuilder();
+            }
+            else
+            {
+                grammarBuilder = new GrammarBuilder(str_GrammarBuilder);
+            }
+
+            // the same culture as the recognizer (US English)
+            grammarBuilder.Culture = MainWindow.mainWindow.kinectRecognizerInfo.Culture;
+
+            //String[] codes = { "Apple", "Watermelon", "Banana" };
+
+            Choices choices = new Choices(options);
+            //choices.Add(codes);
+
+            grammarBuilder.Append(choices);
+
+            return new Grammar(grammarBuilder);
+
+            //Grammar grammar = new Grammar(grammarBuilder);
+
+            //recognizer.LoadGrammar(grammar);
+        }
+
+        private void BuildGrammar() // call it Window_Loaded()
+        {
+            GrammarBuilder grammarBuilder = new GrammarBuilder();
+
+            Choices basicCommands = new Choices();
+            String[] basicNames = { "close app" };
+            basicCommands.Add(basicNames);
+
+            // the same culture as the recognizer (US English)
+            grammarBuilder.Culture = kinectRecognizerInfo.Culture;
+            grammarBuilder.Append(basicCommands);
+
+            Grammar grammar = new Grammar(grammarBuilder);
+
+            Recognizer.LoadGrammar(grammar);
         }
     }
 }

@@ -48,17 +48,6 @@ namespace Project
         public void AddApp(NonDesktopApplication app)
         {
             List_ToBeAdded.Add(app);
-            /*
-            RunningApps.Insert(0, app);
-            Switcher.RunningAppIcons.Add(new MiddleRightElement(app.Image_Normal, app.Image_Selecting, app));
-            MainWindow.RenderManager.RenderList.Insert(1, new RenderManager.RenderClass(app));
-            //Menu is always the first
-
-            foreach(MiddleRightElement element in Switcher.RunningAppIcons)
-            {
-                element.UpdateRect();
-            }
-            */
         }
 
         public void RemoveApp(NonDesktopApplication app)
@@ -85,15 +74,15 @@ namespace Project
             pendingOrders.Add(new OrderRequest(app, to_Index));
         }
 
-        public void Update(int clampedX, int clampedY, Point mousePos)
+        public void Update(int clampedX, int clampedY, Point mousePos, Microsoft.Speech.Recognition.SpeechRecognizedEventArgs lastFrameSpeech)
         {
-            //Trace.WriteLine("==Update==");
+            //Trace.WriteLine("==UpdateA==");
 
             Menu.Update(OnFocusApp == Menu, new Point(clampedX, clampedY), Mouse.LeftButton);
 
             Switcher.Update(false, new Point(clampedX, clampedY), Mouse.LeftButton);
 
-            //Trace.WriteLine("Update CheckPoint A: " + (OnFocusApp != Menu));
+            //Trace.WriteLine("Update Hovering: " + MainWindow.hovering);
             if (OnFocusApp != Menu)
             {
                 //Trace.WriteLine("Update CheckPoint B");
@@ -102,10 +91,11 @@ namespace Project
                 {
                     //Trace.WriteLine("Update CheckPoint C1");
                     //MousePos will be subtituded by handPos and MouseOnClicked will be subtituded by gesture
-                    RunningApps[i].Update(RunningApps[i] == OnFocusApp, i, mousePos, Mouse.LeftButton);
+                    RunningApps[i].Update(RunningApps[i] == OnFocusApp, i, mousePos, Mouse.LeftButton, lastFrameSpeech != null && RunningApps[i] == OnFocusApp? lastFrameSpeech.Result.Text: "");
                     //Trace.WriteLine("Update CheckPoint C2");
                 }
             }
+            //Trace.WriteLine("==UpdateD==");
         }
 
         public void LateProcess()
@@ -138,6 +128,7 @@ namespace Project
                     element.UpdateRect();
                 }
             }
+            OnFocusApp = RunningApps[0];
             List_ToBeAdded.Clear();
         }
 

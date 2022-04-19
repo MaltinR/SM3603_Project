@@ -14,19 +14,22 @@ namespace Project
     {
         public BitmapImage Image_Normal { get; protected set; }
         public BitmapImage Image_Selecting { get; protected set; }
+        public int MinimumWidth { get; protected set; } = 150;
+        public int MinimumHeight { get; protected set; } = 150;
         public bool IsFull { get; protected set; }
         public LocalEdgeControl LocalEdgeControl { get; protected set; }
         public int PosX { get; protected set; }//Top-left pos
         public int PosY { get; protected set; }//Top-left pos
         public int Width { get; protected set; } = 300;
         public int Height { get; protected set; } = 250;
+        public Microsoft.Speech.Recognition.Grammar[] Grammars { get; protected set; }
 
         public void SetWidth(int _width)
         {
             //Limit
-            if (_width < 150)
+            if (_width < MinimumWidth)
             {
-                Width = 150;
+                Width = MinimumWidth;
 
             }
             else
@@ -40,9 +43,9 @@ namespace Project
         public void SetHeight(int _height)
         {
             //Limit
-            if (_height < 150)
+            if (_height < MinimumHeight)
             {
-                Height = 150;
+                Height = MinimumHeight;
             }
             else
             {
@@ -65,7 +68,7 @@ namespace Project
             UpdateRect();
         }
 
-        public virtual void Update(bool isFocusing, int listOrder, Point point, MouseButtonState mouseState)
+        public virtual void Update(bool isFocusing, int listOrder, Point point, MouseButtonState mouseState, string command)
         {
             LocalEdgeControl.CheckShow(point, listOrder, MainWindow.RenderManager.DrawingContext, mouseState);
         }
@@ -88,6 +91,17 @@ namespace Project
 
         //Be called when the app close
         public virtual void OnClose()
+        {
+            if(Grammars != null)
+            {
+                foreach(Microsoft.Speech.Recognition.Grammar grammar in Grammars)
+                {
+                    MainWindow.Recognizer.UnloadGrammar(grammar);
+                }
+            }
+        }
+
+        public virtual void VoiceControl(string command)
         {
 
         }

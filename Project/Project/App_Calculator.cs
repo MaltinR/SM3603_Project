@@ -27,9 +27,9 @@ namespace Project
             base.Print();
         }
 
-        public override void Update(bool isFocusing, int listOrder, Point point, MouseButtonState mouseState)
+        public override void Update(bool isFocusing, int listOrder, Point point, MouseButtonState mouseState, string command)
         {
-            base.Update(isFocusing, listOrder, point, mouseState);
+            base.Update(isFocusing, listOrder, point, mouseState, command);
 
             if (!isFocusing) return;
             //To be implemented

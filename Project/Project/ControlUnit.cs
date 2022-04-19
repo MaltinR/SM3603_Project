@@ -45,9 +45,10 @@ namespace Project
 
         }
 
-        protected virtual void HoverTimesUp(int mousePosX, int mousePosY)
+        protected virtual bool HoverTimesUp(int mousePosX, int mousePosY)
         {
-
+            //True: still hovering
+            return true;
         }
 
         public virtual bool InRange(int mousePosX, int mousePosY, int listOrder)
@@ -78,26 +79,35 @@ namespace Project
             //Otherwise MainWindow.hovering will have a incorrect value
             if ((MainWindow.hovering == null || MainWindow.hovering == this) && MainWindow.dragging == null && InRange(mousePosX, mousePosY, listOrder))
             {
+                isHoveringOrDragging = true;
                 //TODO each point should have an individual timer and class
                 if (HoveringTime > 0 && MainWindow.hovering == this && ++MainWindow.timerOfHovering >= HoveringTime)
                 {
                     MainWindow.timerOfHovering = 0;
-                    HoverTimesUp(mousePosX, mousePosY);
+                    isHoveringOrDragging &= HoverTimesUp(mousePosX, mousePosY);
+                    Trace.WriteLine("isHoveringOrDragging: " + isHoveringOrDragging);
                 }
 
-                isHoveringOrDragging = true;
                 Hovering(mousePosX, mousePosY);
 
-                if (MainWindow.dragging == null && mouseState == MouseButtonState.Pressed)
+                if (isHoveringOrDragging)
                 {
-                    MainWindow.dragging = this;
-                    MainWindow.dragging.OnPressed(mousePosX, mousePosY);
+                    if (MainWindow.dragging == null && mouseState == MouseButtonState.Pressed)
+                    {
+                        MainWindow.dragging = this;
+                        MainWindow.dragging.OnPressed(mousePosX, mousePosY);
+                    }
+                    else
+                    {
+                        MainWindow.hovering = this;
+                    }
                 }
                 else
                 {
-                    MainWindow.hovering = this;
+                    MainWindow.dragging = null;
+                    MainWindow.hovering = null;
                 }
-                return true;
+                return isHoveringOrDragging;
             }
             else
             {
@@ -112,7 +122,7 @@ namespace Project
             return isHoveringOrDragging;
         }
 
-        public void Show(DrawingContext dc)
+        public virtual void Show(DrawingContext dc)
         {
             dc.DrawImage(isHoveringOrDragging ? Image_Selecting : Image_Normal, Rect);
         }
@@ -300,10 +310,11 @@ namespace Project
             base.UpdateRect();
         }
 
-        protected override void HoverTimesUp(int mousePosX, int mousePosY)
+        protected override bool HoverTimesUp(int mousePosX, int mousePosY)
         {
             Parent.OnClose();
             MainWindow.Manager.RemoveApp(Parent);
+            return false;
         }
     }
 
@@ -402,9 +413,10 @@ namespace Project
             CorrespondingApp = app;
         }
 
-        protected override void HoverTimesUp(int mousePosX, int mousePosY)
+        protected override bool HoverTimesUp(int mousePosX, int mousePosY)
         {
             MainWindow.Manager.SetFocus(CorrespondingApp);
+            return false;
         }
 
         public override void UpdateRect()
@@ -515,6 +527,8 @@ namespace Project
         {
             Parent = imageEditor;
             Slider = slider;
+            Image_Normal = new BitmapImage(new Uri("Images/ImageTool_ChannelR_Normal.png", UriKind.Relative));
+            Image_Selecting = new BitmapImage(new Uri("Images/ImageTool_ChannelR_Selecting.png", UriKind.Relative));
 
             PosY = 50;
             Width = 30;
@@ -530,6 +544,8 @@ namespace Project
         {
             Parent = imageEditor;
             Slider = slider;
+            Image_Normal = new BitmapImage(new Uri("Images/ImageTool_ChannelG_Normal.png", UriKind.Relative));
+            Image_Selecting = new BitmapImage(new Uri("Images/ImageTool_ChannelG_Selecting.png", UriKind.Relative));
 
             PosY = 80;
             Width = 30;
@@ -545,6 +561,8 @@ namespace Project
         {
             Parent = imageEditor;
             Slider = slider;
+            Image_Normal = new BitmapImage(new Uri("Images/ImageTool_ChannelB_Normal.png", UriKind.Relative));
+            Image_Selecting = new BitmapImage(new Uri("Images/ImageTool_ChannelB_Selecting.png", UriKind.Relative));
 
             PosY = 110;
             Width = 30;
@@ -560,6 +578,8 @@ namespace Project
         {
             Parent = imageEditor;
             Slider = slider;
+            Image_Normal = new BitmapImage(new Uri("Images/ImageTool_Blank_Normal.png", UriKind.Relative));
+            Image_Selecting = new BitmapImage(new Uri("Images/ImageTool_Blank_Selecting.png", UriKind.Relative));
 
             PosY = 140;
             Width = 30;
@@ -567,12 +587,61 @@ namespace Project
 
             Rect = new Rect(PosX, PosY, Width, Height);
         }
+
+        public override void Print()
+        {
+            base.Print();
+            int size = (int)((Parent as App_ImageEditor).BrushSize / 100.0 * 24);
+            MainWindow.RenderManager.DrawingContext.DrawRectangle(Brushes.Black, null, new Rect(Parent.PosX + PosX + 3+(24-size)/2, Parent.PosY + PosY + 3 + (24 - size)/2, size, size));
+        }
+    }
+
+    public class Image_PaintBoard : LocalControlUnit
+    {
+        public Image_PaintBoard(App_ImageEditor imageEditor)
+        {
+            Parent = imageEditor;
+
+            PosX = 40;
+            PosY = 50;
+            Width = Parent.Width - 90;
+            Height = Parent.Height - 100;
+
+            UpdateRect();
+        }
+
+        protected override void OnPressed(int mousePosX, int mousePosY)
+        {
+            (Parent as App_ImageEditor).Point_ClickFrame = new Point(mousePosX - (PosX + Parent.PosX), mousePosY - (PosY + Parent.PosY));
+            (Parent as App_ImageEditor).Point_PreviousFrame = (Parent as App_ImageEditor).Point_ClickFrame;
+            (Parent as App_ImageEditor).Point_CurrentFrame = (Parent as App_ImageEditor).Point_ClickFrame;
+            (Parent as App_ImageEditor).IsPaint = true;
+        }
+
+        protected override void Dragging(int mousePosX, int mousePosY)
+        {
+            (Parent as App_ImageEditor).Point_PreviousFrame = (Parent as App_ImageEditor).Point_CurrentFrame;
+            (Parent as App_ImageEditor).Point_CurrentFrame = new Point(mousePosX - (PosX + Parent.PosX), mousePosY - (PosY + Parent.PosY));
+        }
+
+        protected override void OnRelease(int mousePosX, int mousePosY)
+        {
+            (Parent as App_ImageEditor).PaintEnd();
+        }
+
+        public override void UpdateRect()
+        {
+            Width = Parent.Width - 90;
+            Height = Parent.Height - 100;
+            base.UpdateRect();
+        }
     }
     public class Image_ChannelSliderR : Image_ChannelSlider
     {
         public Image_ChannelSliderR(App_ImageEditor imageEditor)
         {
             Parent = imageEditor;
+            Image_Normal = new BitmapImage(new Uri("Images/ImageTool_SliderBackground.png", UriKind.Relative));
 
             PosY = 50;
             Width = 150;
@@ -592,6 +661,7 @@ namespace Project
         public Image_ChannelSliderG(App_ImageEditor imageEditor)
         {
             Parent = imageEditor;
+            Image_Normal = new BitmapImage(new Uri("Images/ImageTool_SliderBackground.png", UriKind.Relative));
 
             PosY = 80;
             Width = 150;
@@ -612,6 +682,7 @@ namespace Project
         public Image_ChannelSliderB(App_ImageEditor imageEditor)
         {
             Parent = imageEditor;
+            Image_Normal = new BitmapImage(new Uri("Images/ImageTool_SliderBackground.png", UriKind.Relative));
 
             PosY = 110;
             Width = 150;
@@ -631,6 +702,7 @@ namespace Project
         public Image_ChannelSliderSize(App_ImageEditor imageEditor)
         {
             Parent = imageEditor;
+            Image_Normal = new BitmapImage(new Uri("Images/ImageTool_SliderBackground.png", UriKind.Relative));
 
             PosY = 140;
             Width = 150;
@@ -642,10 +714,62 @@ namespace Project
         protected override void Dragging(int mousePosX, int mousePosY)
         {
             base.Dragging(mousePosX, mousePosY);
-            (Parent as App_ImageEditor).BrushSize = (int)(99 * _percent) + 1;
+            (Parent as App_ImageEditor).BrushSize = (int)(98 * _percent) + 2;
         }
     }
 
+    public class Image_Tool : LocalControlUnit
+    {
+        App_ImageEditor.Tool tool_Representing;
+        public Image_Tool(App_ImageEditor app, App_ImageEditor.Tool tool)
+        {
+            tool_Representing = tool;
+            Parent = app;
+            HoveringTime = 30;
+
+            switch(tool)
+            {
+                case App_ImageEditor.Tool.Line:
+                    Image_Normal = new BitmapImage(new Uri("Images/ImageTool_Line_Normal.png", UriKind.Relative));
+                    Image_Selecting = new BitmapImage(new Uri("Images/ImageTool_Line_Selecting.png", UriKind.Relative));
+                    break;
+                case App_ImageEditor.Tool.Pen:
+                    Image_Normal = new BitmapImage(new Uri("Images/ImageTool_Pen_Normal.png", UriKind.Relative));
+                    Image_Selecting = new BitmapImage(new Uri("Images/ImageTool_Pen_Selecting.png", UriKind.Relative));
+                    break;
+                case App_ImageEditor.Tool.Picker:
+                    Image_Normal = new BitmapImage(new Uri("Images/ImageTool_Picker_Normal.png", UriKind.Relative));
+                    Image_Selecting = new BitmapImage(new Uri("Images/ImageTool_Picker_Selecting.png", UriKind.Relative));
+                    break;
+            }
+
+            PosX = ((int)tool + 1) * 30;
+            PosY = Parent.Height - 30;
+            Width = 30;
+            Height = 30;
+
+            UpdateRect();
+        }
+
+        protected override bool HoverTimesUp(int mousePosX, int mousePosY)
+        {
+            (Parent as App_ImageEditor).UsingTool = tool_Representing;
+            return false;
+        }
+
+        public override void UpdateRect()
+        {
+            PosX = ((int)tool_Representing + 1) * 30;
+            PosY = Parent.Height - 30;
+
+            base.UpdateRect();
+        }
+
+        public override void Show(DrawingContext dc)
+        {
+            dc.DrawImage(isHoveringOrDragging || (Parent as App_ImageEditor).UsingTool == tool_Representing ? Image_Selecting : Image_Normal, Rect);
+        }
+    }
     //RGB & Size
     public class Image_Channel : LocalControlUnit
     {
@@ -653,12 +777,6 @@ namespace Project
         protected override void Dragging(int mousePosX, int mousePosY)
         {
             MainWindow.dragging = Slider;
-        }
-
-        public override void Print()
-        {
-            //For Test
-            MainWindow.RenderManager.DrawingContext.DrawRectangle(Brushes.Gray, null, Rect);
         }
     }
 
@@ -672,7 +790,8 @@ namespace Project
         }
         public override void Print()
         {
-            MainWindow.RenderManager.DrawingContext.DrawRectangle(Brushes.DarkGray, null, Rect);
+            //MainWindow.RenderManager.DrawingContext.DrawRectangle(Brushes.DarkGray, null, Rect);
+            MainWindow.RenderManager.DrawingContext.DrawImage(Image_Normal, Rect);
             //Bar
             MainWindow.RenderManager.DrawingContext.DrawRectangle(Brushes.Black, null, new Rect(Parent.PosX + PosX + 5, Parent.PosY + PosY + (Height / 2) - 2, Width - 10, 4));
             //Button
@@ -709,14 +828,14 @@ namespace Project
             MainWindow.dragging = (Parent as App_FileExplorer).SlideBar;
         }
 
-        protected override void HoverTimesUp(int mousePosX, int mousePosY)
+        protected override bool HoverTimesUp(int mousePosX, int mousePosY)
         {
+            //MainWindow.dragging = null;
+            //MainWindow.hovering = null;
             //Open
             //Call parent's function
             (Parent as App_FileExplorer).Open(IndexFromView);
-
-            //MainWindow.dragging = null;
-            //MainWindow.hovering = null;
+            return false;
         }
 
         public void SetHoveringTime(bool isHover)
@@ -1024,9 +1143,10 @@ namespace Project
             UpdateRect();
         }
 
-        protected override void HoverTimesUp(int mousePosX, int mousePosY)
+        protected override bool HoverTimesUp(int mousePosX, int mousePosY)
         {
             MainWindow.Manager.AddApp(new App_Calculator());
+            return false;
         }
     }
 
@@ -1050,9 +1170,10 @@ namespace Project
             UpdateRect();
         }
 
-        protected override void HoverTimesUp(int mousePosX, int mousePosY)
+        protected override bool HoverTimesUp(int mousePosX, int mousePosY)
         {
             MainWindow.Manager.AddApp(new App_FileExplorer());
+            return false;
         }
     }
 }

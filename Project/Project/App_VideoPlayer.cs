@@ -27,6 +27,14 @@ namespace Project
             LocalEdgeControl = new LocalEdgeControl(this);
             Rect = new Rect(PosX, PosY, Width, Height);
 
+            //Please enter the needed speech
+            Grammars = new Microsoft.Speech.Recognition.Grammar[] { MainWindow.GetGrammar("", new string[] { "stop", "pause", "play" }), MainWindow.GetGrammar("volume", new string[] { "up", "down", "mute", "max" }), MainWindow.GetGrammar("volume level", new string[] { "zero", "one", "two", "three", "four", "five" }) };
+
+            foreach (Microsoft.Speech.Recognition.Grammar grammar in Grammars)
+            {
+                MainWindow.mainWindow.BuildNewGrammar(grammar);
+            }
+
             controlZones = new LocalControlUnit[] { new Video_Timespan(this), new Video_Volume(this) };
 
             player = new MediaPlayer();
@@ -37,9 +45,9 @@ namespace Project
             app_AspectRatio = Width / (double)Height;
         }
 
-        public override void Update(bool isFocusing, int listOrder, Point point, MouseButtonState mouseState)
+        public override void Update(bool isFocusing, int listOrder, Point point, MouseButtonState mouseState, string command)
         {
-            base.Update(isFocusing, listOrder, point, mouseState);
+            base.Update(isFocusing, listOrder, point, mouseState, command);
 
             if (!isFocusing) return;
 
@@ -49,6 +57,60 @@ namespace Project
             foreach (LocalControlUnit unit in controlZones)
             {
                 unit.IsHoveringOrDragging(clampedX, clampedY, listOrder, mouseState);
+            }
+
+            VoiceControl(command);
+        }
+
+        public override void VoiceControl(string command)
+        {
+            switch (command)
+            {
+                case "stop":
+                    player.Stop();
+                    break;
+                case "pause":
+                    player.Pause();
+                    break;
+                case "play":
+                    player.Play();
+                    break;
+                case "volume up":
+                    player.Volume += 0.2;
+                    break;
+                case "volume down":
+                    player.Volume -= 0.2;
+                    break;
+                case "volume mute":
+                    player.Volume = 0;
+                    break;
+                case "volume max":
+                    player.Volume = 1;
+                    break;
+                case "volume level zero":
+                    player.Volume = 0;
+                    break;
+                case "volume level one":
+                    player.Volume = 0.2;
+                    break;
+                case "volume level two":
+                    player.Volume = 0.4;
+                    break;
+                case "volume level three":
+                    player.Volume = 0.6;
+                    break;
+                case "volume level four":
+                    player.Volume = 0.8;
+                    break;
+                case "volume level five":
+                    player.Volume = 1;
+                    break;
+                case "close app":
+                    OnClose();
+                    MainWindow.Manager.RemoveApp(this);
+                    break;
+                default:
+                    break;
             }
         }
 

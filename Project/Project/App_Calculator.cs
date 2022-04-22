@@ -25,6 +25,7 @@ namespace Project
         public override void Print()
         {
             base.Print();
+            // UI 
         }
 
         public override void Update(bool isFocusing, int listOrder, Point point, MouseButtonState mouseState, string command)

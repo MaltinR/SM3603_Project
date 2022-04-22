@@ -16,6 +16,8 @@ using System.Diagnostics;
 using Microsoft.Speech.AudioFormat;
 using Microsoft.Speech.Recognition;
 using Microsoft.Kinect;
+using Microsoft.Kinect.VisualGestureBuilder;
+
 
 namespace Project
 {
@@ -61,6 +63,12 @@ namespace Project
         public static ControlUnit dragging;//To point class (Hand)
         public static ControlUnit hovering;//To point class (Hand)
 
+        private VisualGestureBuilderFrameSource vgbFrameSource;
+        private VisualGestureBuilderDatabase vgbDb;
+        private VisualGestureBuilderFrameReader vgbFrameReader;
+
+        //private Body[] bodies;
+
         SpeechRecognizedEventArgs _lastFrameSpeech;
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
@@ -72,6 +80,8 @@ namespace Project
 
             sensor = KinectSensor.GetDefault(); // get the default Kinect sensor 
             sensor.Open();
+
+            GestureInit();
 
             ColorFrameInit();
             DrawingGroupInit();
@@ -111,18 +121,117 @@ namespace Project
 
             Recognizer.SpeechRecognized += Recognizer_SpeechRecognized;
 
+            BodyFrameReaderInit();
+
+
+
             //Debug
             //Manager.AddApp(new App_VideoPlayer("E:/School/CityU/221/SM3603/SM3603_Project/SampleVideos/277957136_1030137967586408_6026758252614106551_n.mp4"));
             //Manager.AddApp(new App_VideoPlayer("E:/School/CityU/221/SM3603/SM3603_Project/SampleVideos/277957136_1030137967586408_6026758252614106551_n.mp4"));
             Manager.AddApp(new App_FileExplorer());
             //Manager.AddApp(new App_ImageEditor("E:/School/CityU/221/SM3603/SM3603_Project/Test.png"));
         }
+
+        private void GestureInit()
+        {
+            vgbFrameSource = new VisualGestureBuilderFrameSource(sensor, 0);
+
+            vgbDb = new VisualGestureBuilderDatabase(@".\Gestures\MyGestures.gbd");
+            Console.WriteLine("vgbDb.AvailableGestures.Count: " + vgbDb.AvailableGestures.Count);
+            vgbFrameSource.AddGestures(vgbDb.AvailableGestures);
+
+            vgbFrameReader = vgbFrameSource.OpenReader();
+            vgbFrameReader.FrameArrived += VgbFrameReader_FrameArrived;
+        }
+
+        private void VgbFrameReader_FrameArrived(object sender, VisualGestureBuilderFrameArrivedEventArgs e)
+        {
+            using (VisualGestureBuilderFrame vgbFrame = e.FrameReference.AcquireFrame())
+            {
+                if (vgbFrame == null) return;
+
+                IReadOnlyDictionary<Gesture, DiscreteGestureResult> results =
+                    vgbFrame.DiscreteGestureResults;
+                if (results != null)
+                {
+                    // Check if any of the gestures is recognized 
+                    foreach (Gesture gesture in results.Keys)
+                    {
+                        DiscreteGestureResult result = results[gesture];
+                        if (result.Detected)
+                        {
+                            Console.WriteLine(gesture.Name + " gesture recognized; confidence: " + result.Confidence);
+                        }
+                    }
+
+                }
+            }
+
+        }
+
         private void Recognizer_SpeechRecognized(object sender, SpeechRecognizedEventArgs e)
         {
             if (e.Result.Confidence > 0.6)
                 _lastFrameSpeech = e;
             Trace.WriteLine(e.Result.Text + " (" + e.Result.Confidence + ")");
         }
+
+        //This following function is borrowed from course's slides (SM3603-Topic06)
+        private void BodyFrameReaderInit()
+        {
+            BodyFrameReader bodyFrameReader = sensor.BodyFrameSource.OpenReader();
+            bodyFrameReader.FrameArrived += BodyFrameReader_FrameArrived;
+
+            // BodyCount: maximum number of bodies that can be tracked at one time
+            //bodies = new Body[sensor.BodyFrameSource.BodyCount];
+            //bodies = new Body[1];//In our project one is ok
+        }
+
+        private void BodyFrameReader_FrameArrived(object sender, BodyFrameArrivedEventArgs e)
+        {
+            using (BodyFrame bodyFrame = e.FrameReference.AcquireFrame())
+            {
+                //if (bodyFrame == null) return;
+                if (bodyFrame != null)
+                {
+                    //bodyFrame.GetAndRefreshBodyData(bodies);
+
+                    Body body = GetClosestBody(bodyFrame);
+                    if (body != null)
+                        vgbFrameSource.TrackingId = body.TrackingId;
+
+                }
+            }
+
+        }
+
+        //This following function is borrowed from course's slides (SM3603-Topic09)
+        private Body GetClosestBody(BodyFrame bodyFrame)
+        {
+            Body[] bodies = new Body[6];
+            bodyFrame.GetAndRefreshBodyData(bodies);
+
+            Body closestBody = null;
+            foreach (Body b in bodies)
+            {
+                if (b.IsTracked)
+                {
+                    if (closestBody == null) closestBody = b;
+                    else
+                    {
+                        Joint newHeadJoint = b.Joints[JointType.Head];
+                        Joint oldHeadJoint = closestBody.Joints[JointType.Head];
+                        if (newHeadJoint.TrackingState == TrackingState.Tracked &&
+                        newHeadJoint.Position.Z < oldHeadJoint.Position.Z)
+                        {
+                            closestBody = b;
+                        }
+                    }
+                }
+            }
+            return closestBody;
+        }
+
 
         //This following function is borrowed from course's slides
         void ColorFrameInit()

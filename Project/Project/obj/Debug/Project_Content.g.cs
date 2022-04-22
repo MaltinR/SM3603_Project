@@ -8,6 +8,8 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
+[assembly: System.Windows.Resources.AssemblyAssociatedContentFileAttribute("gestures/projectgestures.gbd")]
+[assembly: System.Windows.Resources.AssemblyAssociatedContentFileAttribute("gestures/mygestures.gbd")]
 [assembly: System.Windows.Resources.AssemblyAssociatedContentFileAttribute("images/areaselection_close_normal.png")]
 [assembly: System.Windows.Resources.AssemblyAssociatedContentFileAttribute("images/areaselection_close_selecting.png")]
 [assembly: System.Windows.Resources.AssemblyAssociatedContentFileAttribute("images/areaselection_switch_normal.png")]

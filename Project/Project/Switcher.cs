@@ -26,7 +26,7 @@ namespace Project
 
             Image_Hightlight = new BitmapImage(new Uri("Images/AreaSelection_Menu_Normal.png", UriKind.Relative));
         }
-        public override void Update(bool isFocusing, Point point, MouseButtonState mouseState)
+        public override void Update(bool isFocusing, Point point, Microsoft.Kinect.HandState handState)
         {
             int clampedX = point.X < 0 ? 0 : point.X > MainWindow.Drawing_Width ? MainWindow.Drawing_Width : (int)point.X;
             int clampedY = point.Y < 0 ? 0 : point.Y > MainWindow.Drawing_Height ? MainWindow.Drawing_Height : (int)point.Y;
@@ -38,18 +38,18 @@ namespace Project
                 {
                     //RunningAppIcons[i].UpdateRect(new Rect(RunningAppIcons[i].PosX, MiddleRightSlideBar.PosY + ((i - Start) * 50), 50, 50));
                     RunningAppIcons[i].UpdateRect();
-                    RunningAppIcons[i].IsHoveringOrDragging(clampedX, clampedY, 0, Mouse.LeftButton);
+                    RunningAppIcons[i].IsHoveringOrDragging(clampedX, clampedY, 0, handState);
                 }
             }
             else
             {
                 foreach (MiddleRightElement element in RunningAppIcons)
                 {
-                    element.IsHoveringOrDragging(clampedX, clampedY, 0, Mouse.LeftButton);
+                    element.IsHoveringOrDragging(clampedX, clampedY, 0, handState);
                 }
             }
             if (MainWindow.dragging == MiddleRightSlideBar)
-                MiddleRightSlideBar.IsHoveringOrDragging(clampedX, clampedY, 0, Mouse.LeftButton);
+                MiddleRightSlideBar.IsHoveringOrDragging(clampedX, clampedY, 0, handState);
         }
 
         public override void Print()

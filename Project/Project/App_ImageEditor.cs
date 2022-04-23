@@ -222,6 +222,8 @@ namespace Project
             int dirX = endX - startX >0? -1 : endX - startX < 0 ? +1 : 0;
             int dirY = endY - startY >0? -1 : endY - startY < 0 ? +1 : 0;
 
+            bool drew = false;
+
             System.Drawing.Color color = System.Drawing.Color.FromArgb(255, Color.R, Color.G, Color.B);
 
             for (int i = startX - BrushSize / 2; i < startX + BrushSize / 2; i++)
@@ -231,6 +233,7 @@ namespace Project
                 {
                     if (j < 0 || j >= bitmap.Height) continue;
                     bitmap.SetPixel(i, j, color);
+                    drew |= true;
                 }
             }
 
@@ -238,14 +241,14 @@ namespace Project
             {
                 for (int i = -BrushSize / 2; i <= BrushSize / 2; i++)
                 {
-                    DrawSingleLine(startX + BrushSize / 2, startY + i, endX + BrushSize / 2, endY + i, true, color, ref bitmap);
+                    drew |= DrawSingleLine(startX + BrushSize / 2, startY + i, endX + BrushSize / 2, endY + i, true, color, ref bitmap);
                 }
             }
             else if(dirX > 0)
             {
                 for (int i = -BrushSize / 2; i <= BrushSize / 2; i++)
                 {
-                    DrawSingleLine(startX - BrushSize / 2, startY + i, endX - BrushSize / 2, endY + i, true, color, ref bitmap);
+                    drew |= DrawSingleLine(startX - BrushSize / 2, startY + i, endX - BrushSize / 2, endY + i, true, color, ref bitmap);
                 }
             }
 
@@ -253,28 +256,32 @@ namespace Project
             {
                 for (int i = -BrushSize / 2; i <= BrushSize / 2; i++)
                 {
-                    DrawSingleLine(startX + i, startY + BrushSize / 2, endX + i, endY + BrushSize / 2, false, color, ref bitmap);
+                    drew |= DrawSingleLine(startX + i, startY + BrushSize / 2, endX + i, endY + BrushSize / 2, false, color, ref bitmap);
                 }
             }
             else if (dirY > 0)
             {
                 for (int i = -BrushSize / 2; i <= BrushSize / 2; i++)
                 {
-                    DrawSingleLine(startX + i, startY - BrushSize / 2, endX + i, endY - BrushSize / 2, false, color, ref bitmap);
+                    drew |= DrawSingleLine(startX + i, startY - BrushSize / 2, endX + i, endY - BrushSize / 2, false, color, ref bitmap);
                 }
             }
 
-            bitmap_Current = bitmap;
-            //It is preview
-            previewImage = GetBitmapImage(bitmap);
-            if (UsingTool.Equals(Tool.Pen))
+            if (drew)
             {
-                currentImage = previewImage;
+                bitmap_Current = bitmap;
+                //It is preview
+                previewImage = GetBitmapImage(bitmap);
+                if (UsingTool.Equals(Tool.Pen))
+                {
+                    currentImage = previewImage;
+                }
             }
         }
 
-        static void DrawSingleLine(int startX, int startY, int endX, int endY, bool isXBased, System.Drawing.Color color, ref System.Drawing.Bitmap bitmap)
+        static bool DrawSingleLine(int startX, int startY, int endX, int endY, bool isXBased, System.Drawing.Color color, ref System.Drawing.Bitmap bitmap)
         {
+            bool drew = false;
             int distX = endX - startX, distY = endY - startY;
             //System.Diagnostics.Trace.WriteLine(distX + " " + distY);
 
@@ -289,6 +296,8 @@ namespace Project
                     if (y < 0 || y >= bitmap.Height) break;
 
                     bitmap.SetPixel(x, y, color);
+                    drew |= true;
+                    //Console.WriteLine("LineA: " + x + " , " + y);
                 }
             }
             else
@@ -304,8 +313,11 @@ namespace Project
                     if (x < 0 || x >= bitmap.Width) break;
 
                     bitmap.SetPixel(x, y, color);
+                    drew |= true;
                 }
             }
+
+            return drew;
         }
 
         //Reference: https://blog.csdn.net/wangshubo1989/article/details/47296339
@@ -340,9 +352,9 @@ namespace Project
                 //return new System.Drawing.Bitmap(bitmap);
             }
         }
-        public override void Update(bool isFocusing, int listOrder, Point point, MouseButtonState mouseState, string command)
+        public override void Update(bool isFocusing, int listOrder, Point point, Microsoft.Kinect.HandState handState, string command, string gesture)
         {
-            base.Update(isFocusing, listOrder, point, mouseState, command);
+            base.Update(isFocusing, listOrder, point, handState, command, gesture);
 
             if (!isFocusing) return;
 
@@ -351,13 +363,13 @@ namespace Project
 
             foreach (LocalControlUnit unit in Tools)
             {
-                unit.IsHoveringOrDragging(clampedX, clampedY, listOrder, mouseState);
+                unit.IsHoveringOrDragging(clampedX, clampedY, listOrder, handState);
             }
             foreach (LocalControlUnit unit in Sliders)
             {
                 if (MainWindow.dragging == unit)
                 {
-                    unit.IsHoveringOrDragging(clampedX, clampedY, listOrder, mouseState);
+                    unit.IsHoveringOrDragging(clampedX, clampedY, listOrder, handState);
                     break;
                 }
             }
@@ -386,9 +398,28 @@ namespace Project
                         break;
                 }
             }
+
+            GestureControl(gesture);
+
             VoiceControl(command);
         }
 
+        public override void GestureControl(string gesture)
+        {
+            switch (gesture)
+            {
+                case "handninety_left":
+                    Undo();
+                    MainWindow.mainWindow.DebugLine.Text = "Last Gesture Action: Undo";
+                    MainWindow.mainWindow.ResetGestureTimer();
+                    break;
+                case "handninety_right":
+                    Redo();
+                    MainWindow.mainWindow.DebugLine.Text = "Last Gesture Action: Redo";
+                    MainWindow.mainWindow.ResetGestureTimer();
+                    break;
+            }
+        }
         public override void VoiceControl(string command)
         {
             switch (command)

@@ -15,7 +15,7 @@ namespace Project
         //Run per frame
 
         //For interactive
-        public virtual void Update(bool isFocusing, Point point, MouseButtonState mouseState)
+        public virtual void Update(bool isFocusing, Point point, Microsoft.Kinect.HandState handState)
         {
 
         }

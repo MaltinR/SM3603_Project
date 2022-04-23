@@ -8,14 +8,14 @@ namespace Project
 {
     public class HandControl
     {
-        public enum Gesture
-        {
-
-        }
-
         public ControlUnit dragging;
         public ControlUnit hovering;
         //Point
         //Gesture
+        public HandControl()
+        {
+            dragging = null;
+            hovering = null;
+        }
     }
 }

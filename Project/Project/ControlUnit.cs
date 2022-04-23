@@ -25,7 +25,7 @@ namespace Project
         public int HoveringTime { get; protected set; } = -1;//-1 == no stay event
 
         //Call when hovering
-        protected virtual void Hovering(int mousePosX, int mousePosY)
+        protected virtual void Hovering(int mousePosX, int mousePosY, Microsoft.Kinect.HandState handState)
         {
 
         }
@@ -58,12 +58,12 @@ namespace Project
         }
 
         //Check is dragging and hovering
-        public virtual bool IsHoveringOrDragging(int mousePosX, int mousePosY, int listOrder, MouseButtonState mouseState)
+        public virtual bool IsHoveringOrDragging(int mousePosX, int mousePosY, int listOrder, Microsoft.Kinect.HandState handState)
         {
             isHoveringOrDragging = false;
             if (MainWindow.dragging == this)
             {
-                if (mouseState == MouseButtonState.Pressed)
+                if (handState == Microsoft.Kinect.HandState.Closed)
                 {
                     Dragging(mousePosX, mousePosY);
                     isHoveringOrDragging = true;
@@ -88,11 +88,11 @@ namespace Project
                     Trace.WriteLine("isHoveringOrDragging: " + isHoveringOrDragging);
                 }
 
-                Hovering(mousePosX, mousePosY);
+                Hovering(mousePosX, mousePosY, handState);
 
                 if (isHoveringOrDragging)
                 {
-                    if (MainWindow.dragging == null && mouseState == MouseButtonState.Pressed)
+                    if (MainWindow.dragging == null && handState == Microsoft.Kinect.HandState.Closed)
                     {
                         MainWindow.dragging = this;
                         MainWindow.dragging.OnPressed(mousePosX, mousePosY);
@@ -378,10 +378,10 @@ namespace Project
             Rect = new Rect(PosX, PosY, Width, Height);
         }
 
-        public override bool IsHoveringOrDragging(int mousePosX, int mousePosY, int listOrder, MouseButtonState mouseState)
+        public override bool IsHoveringOrDragging(int mousePosX, int mousePosY, int listOrder, Microsoft.Kinect.HandState handState)
         {
             MainWindow.Manager.Menu.pendingPercent = -1;
-            return base.IsHoveringOrDragging(mousePosX, mousePosY, listOrder, mouseState);
+            return base.IsHoveringOrDragging(mousePosX, mousePosY, listOrder, handState);
         }
 
         //TODO: needs UpdateRect as well when changing the window
@@ -459,11 +459,11 @@ namespace Project
             UpdateRect();
         }
 
-        public override bool IsHoveringOrDragging(int mousePosX, int mousePosY, int listOrder, MouseButtonState mouseState)
+        public override bool IsHoveringOrDragging(int mousePosX, int mousePosY, int listOrder, Microsoft.Kinect.HandState handState)
         {
             if (MainWindow.dragging == this)
             {
-                if (mouseState == MouseButtonState.Pressed)
+                if (handState == Microsoft.Kinect.HandState.Closed)
                 {
                     Dragging(mousePosX, mousePosY);
                     isHoveringOrDragging = true;
@@ -481,7 +481,7 @@ namespace Project
             if (MainWindow.hovering == this)
             {
                 MainWindow.hovering = null;
-                if (mouseState == MouseButtonState.Pressed && InRange(mousePosX, mousePosY, listOrder))
+                if (handState == Microsoft.Kinect.HandState.Closed && InRange(mousePosX, mousePosY, listOrder))
                 {
                     Dragging(mousePosX, mousePosY);
                     isHoveringOrDragging = true;
@@ -808,7 +808,7 @@ namespace Project
             Parent = parent;
             IndexFromView = index;
 
-            HoveringTime = enableHover?60:-1;
+            HoveringTime = enableHover?45:-1;
 
             PosX = 50;
             PosY = startPos;
@@ -818,9 +818,14 @@ namespace Project
             UpdateRect();
         }
 
-        protected override void Hovering(int mousePosX, int mousePosY)
+        protected override void Hovering(int mousePosX, int mousePosY, Microsoft.Kinect.HandState handState)
         {
             (Parent as App_FileExplorer).highlighting = IndexFromView;
+
+            if(handState == Microsoft.Kinect.HandState.Lasso)
+            {
+                (Parent as App_FileExplorer).ToggleSelect(IndexFromView);
+            }
         }
         protected override void Dragging(int mousePosX, int mousePosY)
         {
@@ -846,11 +851,11 @@ namespace Project
 
     public class LocalControlUnit_SlideBar : LocalControlUnit
     {
-        public override bool IsHoveringOrDragging(int mousePosX, int mousePosY, int listOrder, MouseButtonState mouseState)
+        public override bool IsHoveringOrDragging(int mousePosX, int mousePosY, int listOrder, Microsoft.Kinect.HandState handState)
         {
             if (MainWindow.dragging == this)
             {
-                if (mouseState == MouseButtonState.Pressed)
+                if (handState == Microsoft.Kinect.HandState.Closed)
                 {
                     Dragging(mousePosX, mousePosY);
                     isHoveringOrDragging = true;
@@ -868,7 +873,7 @@ namespace Project
             if (MainWindow.hovering == this)
             {
                 MainWindow.hovering = null;
-                if (mouseState == MouseButtonState.Pressed && InRange(mousePosX, mousePosY, listOrder))
+                if (handState == Microsoft.Kinect.HandState.Closed && InRange(mousePosX, mousePosY, listOrder))
                 {
                     Dragging(mousePosX, mousePosY);
                     isHoveringOrDragging = true;
@@ -894,11 +899,11 @@ namespace Project
             UpdateRect();
         }
 
-        public override bool IsHoveringOrDragging(int mousePosX, int mousePosY, int listOrder, MouseButtonState mouseState)
+        public override bool IsHoveringOrDragging(int mousePosX, int mousePosY, int listOrder, Microsoft.Kinect.HandState handState)
         {
             if (MainWindow.dragging == this)
             {
-                if (mouseState == MouseButtonState.Pressed)
+                if (handState == Microsoft.Kinect.HandState.Closed)
                 {
                     Dragging(mousePosX, mousePosY);
                     isHoveringOrDragging = true;
@@ -916,7 +921,7 @@ namespace Project
             if (MainWindow.hovering == this)
             {
                 MainWindow.hovering = null;
-                if (mouseState == MouseButtonState.Pressed && InRange(mousePosX, mousePosY, listOrder))
+                if (handState == Microsoft.Kinect.HandState.Closed && InRange(mousePosX, mousePosY, listOrder))
                 {
                     Dragging(mousePosX, mousePosY);
                     isHoveringOrDragging = true;
@@ -1006,10 +1011,10 @@ namespace Project
             draggingDetail.rect_TimeButton = new Rect((Parent.PosX + PosX) + (percent * Width - 4), (Parent.PosY + PosY) + Height / 2 + 20 - 6, 4, 12);
         }
 
-        public override bool IsHoveringOrDragging(int mousePosX, int mousePosY, int listOrder, MouseButtonState mouseState)
+        public override bool IsHoveringOrDragging(int mousePosX, int mousePosY, int listOrder, Microsoft.Kinect.HandState handState)
         {
             draggingDetail.isShow = false;
-            return base.IsHoveringOrDragging(mousePosX, mousePosY, listOrder, mouseState);
+            return base.IsHoveringOrDragging(mousePosX, mousePosY, listOrder, handState);
         }
 
         public override void UpdateRect()
@@ -1077,10 +1082,10 @@ namespace Project
             draggingDetail.rect_VolumeButton = new Rect((Parent.PosX + PosX) + Width * 0.75 - 6, (Parent.PosY + PosY) + (percent * Height - 4) , 12, 4);
         }
 
-        public override bool IsHoveringOrDragging(int mousePosX, int mousePosY, int listOrder, MouseButtonState mouseState)
+        public override bool IsHoveringOrDragging(int mousePosX, int mousePosY, int listOrder, Microsoft.Kinect.HandState handState)
         {
             draggingDetail.isShow = false;
-            return base.IsHoveringOrDragging(mousePosX, mousePosY, listOrder, mouseState);
+            return base.IsHoveringOrDragging(mousePosX, mousePosY, listOrder, handState);
         }
 
         public override void UpdateRect()

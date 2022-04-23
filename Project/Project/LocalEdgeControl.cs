@@ -38,7 +38,7 @@ namespace Project
         }
 
         //Return true if the control point is close to the edge
-        public ControlUnit CheckShow(Point point, int listOrder, DrawingContext dc, MouseButtonState mouseState)//The parameter may be changed to Class to carry more information
+        public ControlUnit CheckShow(Point point, int listOrder, DrawingContext dc, Microsoft.Kinect.HandState handState)//The parameter may be changed to Class to carry more information
         {
             int clampedX = point.X < 0 ? 0 : point.X > MainWindow.Drawing_Width ? MainWindow.Drawing_Width: (int)point.X;
             int clampedY = point.Y < 0 ? 0 : point.Y > MainWindow.Drawing_Height ? MainWindow.Drawing_Height : (int)point.Y;
@@ -47,7 +47,7 @@ namespace Project
 
             foreach (ControlUnit unit in controlUnits)
             {
-                isHoveringOrDragging |= unit.IsHoveringOrDragging(clampedX, clampedY, listOrder, mouseState);
+                isHoveringOrDragging |= unit.IsHoveringOrDragging(clampedX, clampedY, listOrder, handState);
             }
 
             return null;

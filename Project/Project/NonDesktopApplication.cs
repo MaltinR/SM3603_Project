@@ -68,9 +68,9 @@ namespace Project
             UpdateRect();
         }
 
-        public virtual void Update(bool isFocusing, int listOrder, Point point, MouseButtonState mouseState, string command)
+        public virtual void Update(bool isFocusing, int listOrder, Point point, Microsoft.Kinect.HandState handState, string command, string gesture)
         {
-            LocalEdgeControl.CheckShow(point, listOrder, MainWindow.RenderManager.DrawingContext, mouseState);
+            LocalEdgeControl.CheckShow(point, listOrder, MainWindow.RenderManager.DrawingContext, handState);
         }
 
         public override void Print()
@@ -102,6 +102,11 @@ namespace Project
         }
 
         public virtual void VoiceControl(string command)
+        {
+
+        }
+
+        public virtual void GestureControl(string gesture)
         {
 
         }

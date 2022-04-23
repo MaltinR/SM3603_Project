@@ -28,9 +28,9 @@ namespace Project
             // UI 
         }
 
-        public override void Update(bool isFocusing, int listOrder, Point point, MouseButtonState mouseState, string command)
+        public override void Update(bool isFocusing, int listOrder, Point point, Microsoft.Kinect.HandState handState, string command, string gesture)
         {
-            base.Update(isFocusing, listOrder, point, mouseState, command);
+            base.Update(isFocusing, listOrder, point, handState, command, gesture);
 
             if (!isFocusing) return;
             //To be implemented

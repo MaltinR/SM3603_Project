@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.IO;
-using System;
 using System.Threading.Tasks;
 using System.Windows.Media;
 using System.Windows;
@@ -89,6 +88,41 @@ namespace Project
                 subjects.Add(new File_Subject(this, i, curY, RowSize, i <= CurrentFiles.Length + CurrentFolders.Length));
                 curY += RowSize;
             }
+        }
+
+        public void ToggleSelect(int index)
+        {
+            //Cal the current index's detail
+
+            int targetIndex = firstIndex + index;
+
+            //If not blank = Add
+            if (targetIndex != 0 && targetIndex <= CurrentFolders.Length + CurrentFiles.Length)
+            {
+                if(targetIndex <= CurrentFolders.Length)
+                {
+                    AddSelect(CurrentFolders[targetIndex-1]);
+                }
+                else
+                {
+                    AddSelect(CurrentFiles[targetIndex- CurrentFolders.Length - 1]);
+                }
+            }
+            //If blank/=0 -> Clear 
+            else
+            {
+                ClearSelect();
+            }
+        }
+
+        void AddSelect(FileSystemInfo file)
+        {
+            selectingFiles.Add(file);
+        }
+
+        void ClearSelect()
+        {
+            selectingFiles.Clear();
         }
 
         public override void Print()
@@ -223,9 +257,9 @@ namespace Project
             LocalEdgeControl.Print();
         }
 
-        public override void Update(bool isFocusing, int orderList, Point point, MouseButtonState mouseState, string command)
+        public override void Update(bool isFocusing, int orderList, Point point, Microsoft.Kinect.HandState handState, string command, string gesture)
         {
-            base.Update(isFocusing, orderList, point, mouseState, command);
+            base.Update(isFocusing, orderList, point, handState, command, gesture);
 
             highlighting = -1;
 
@@ -235,13 +269,51 @@ namespace Project
             int clampedY = point.Y < 0 ? 0 : point.Y > MainWindow.Drawing_Height ? MainWindow.Drawing_Height : (int)point.Y;
             foreach (File_Subject subject in subjects)
             {
-                subject.IsHoveringOrDragging(clampedX, clampedY, orderList, mouseState);
+                subject.IsHoveringOrDragging(clampedX, clampedY, orderList, handState);
             }
             if (MainWindow.dragging == SlideBar)
-                SlideBar.IsHoveringOrDragging(clampedX, clampedY, 0, Mouse.LeftButton);
+                SlideBar.IsHoveringOrDragging(clampedX, clampedY, 0, handState);
 
-            Trace.WriteLine("hovering: " + MainWindow.hovering);
+            GestureControl(gesture);
+
             VoiceControl(command);
+        }
+
+        public override void GestureControl(string gesture)
+        {
+            switch (gesture)
+            {
+                case "handninety_left":
+                    PreviousPage();
+                    MainWindow.mainWindow.DebugLine.Text = "Last Gesture Action: Previous Page";
+                    MainWindow.mainWindow.ResetGestureTimer();
+                    break;
+                case "handninety_right":
+                    NextPage();
+                    MainWindow.mainWindow.DebugLine.Text = "Last Gesture Action: Next Page";
+                    MainWindow.mainWindow.ResetGestureTimer();
+                    break;
+                case "copy":
+                    Copy();
+                    MainWindow.mainWindow.DebugLine.Text = "Last Gesture Action: Copy";
+                    MainWindow.mainWindow.ResetGestureTimer();
+                    break;
+                case "paste":
+                    Paste();
+                    MainWindow.mainWindow.DebugLine.Text = "Last Gesture Action: Paste";
+                    MainWindow.mainWindow.ResetGestureTimer();
+                    break;
+                case "cut":
+                    Cut();
+                    MainWindow.mainWindow.DebugLine.Text = "Last Gesture Action: Cut";
+                    MainWindow.mainWindow.ResetGestureTimer();
+                    break;
+                case "selectall":
+                    SelectAll();
+                    MainWindow.mainWindow.DebugLine.Text = "Last Gesture Action: Select All";
+                    MainWindow.mainWindow.ResetGestureTimer();
+                    break;
+            }
         }
 
         public override void VoiceControl(string command)

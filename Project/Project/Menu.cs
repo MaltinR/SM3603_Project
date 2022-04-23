@@ -55,18 +55,18 @@ namespace Project
             botCenterMenu.Show(MainWindow.RenderManager.DrawingContext);
         }
 
-        public override void Update(bool isFocusing, Point point, MouseButtonState mouseState)
+        public override void Update(bool isFocusing, Point point, Microsoft.Kinect.HandState handState)
         {
             int clampedX = point.X < 0 ? 0 : point.X > MainWindow.Drawing_Width ? MainWindow.Drawing_Width : (int)point.X;
             int clampedY = point.Y < 0 ? 0 : point.Y > MainWindow.Drawing_Height ? MainWindow.Drawing_Height : (int)point.Y;
 
-            botCenterMenu.IsHoveringOrDragging(clampedX, clampedY, 0, Mouse.LeftButton);
+            botCenterMenu.IsHoveringOrDragging(clampedX, clampedY, 0, handState);
 
             if ((!IsShowed) || (IsDragging)) return;
 
             foreach (ControlUnit unit in controlUnits)
             {
-                unit.IsHoveringOrDragging(clampedX, clampedY, 0, mouseState);
+                unit.IsHoveringOrDragging(clampedX, clampedY, 0, handState);
             }
         }
 

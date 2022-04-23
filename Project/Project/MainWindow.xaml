@@ -5,13 +5,13 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Project"
         mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800" Loaded="Window_Loaded" MinWidth="450" MinHeight="450">
-	<Grid>
-		<Image x:Name="ColorCam" HorizontalAlignment="Left" Height="240" Margin="47,43,0,0" VerticalAlignment="Top" Width="419"/>
-		<Image x:Name="DrawingPlane" HorizontalAlignment="Left" Height="399" Margin="10,10,0,0" VerticalAlignment="Top" Width="772"/>
-		<Image x:Name="Select_Hold" Margin="-171,108,913,261" Source="Images/CursorSelection_Holding.png" Stretch="Fill"/>
-		<Image x:Name="Select_Outline" Margin="-171,108,913,261" Source="Images/CursorSelection_Outline.png" Stretch="Fill"/>
-		<Image x:Name="TopLeft" Margin="-171,197,913,172" Source="Images/AreaSelection_TopLeft_Normal.png" Stretch="Fill"/>
+        Title="MainWindow" Height="840" Width="1280" Loaded="Window_Loaded" MinWidth="1280" MinHeight="840" Background="#FFD2FFFE">
+	<Grid Margin="0,0,0,0">
+		<Image x:Name="DrawingPlane" HorizontalAlignment="Left" Width="1260" Height="700" Margin="0,0,0,0" VerticalAlignment="Top"/>
+		<Image x:Name="Select_Hold" Margin="-125,210,1355,401" Source="Images/CursorSelection_Holding.png" Stretch="Fill" Width="50" Height="52"/>
+		<Image x:Name="Select_Outline" Margin="-125,210,1355,401" Source="Images/CursorSelection_Outline.png" Stretch="Fill" Width="50" Height="52"/>
+		<Image x:Name="TopLeft" Margin="-125,113,1355,500" Source="Images/AreaSelection_TopLeft_Normal.png" Stretch="Fill" Width="50" Height="50"/>
+		<TextBlock x:Name="DebugLine" HorizontalAlignment="Center" Margin="0,715,0,0" VerticalAlignment="Top" Height="100" Width="1260" FontSize="36" Foreground="#FF2B2B2B"/>
 
 	</Grid>
 </Window>

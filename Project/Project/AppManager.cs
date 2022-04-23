@@ -74,13 +74,13 @@ namespace Project
             pendingOrders.Add(new OrderRequest(app, to_Index));
         }
 
-        public void Update(int clampedX, int clampedY, Point mousePos, Microsoft.Speech.Recognition.SpeechRecognizedEventArgs lastFrameSpeech)
+        public void Update(int clampedX, int clampedY, Point mousePos, Microsoft.Kinect.HandState handState, Microsoft.Speech.Recognition.SpeechRecognizedEventArgs lastFrameSpeech, Microsoft.Kinect.VisualGestureBuilder.Gesture lastFrameGesture)
         {
             //Trace.WriteLine("==UpdateA==");
 
-            Menu.Update(OnFocusApp == Menu, new Point(clampedX, clampedY), Mouse.LeftButton);
+            Menu.Update(OnFocusApp == Menu, new Point(clampedX, clampedY), handState);
 
-            Switcher.Update(false, new Point(clampedX, clampedY), Mouse.LeftButton);
+            Switcher.Update(false, new Point(clampedX, clampedY), handState);
 
             //Trace.WriteLine("Update Hovering: " + MainWindow.hovering);
             if (OnFocusApp != Menu)
@@ -91,7 +91,9 @@ namespace Project
                 {
                     //Trace.WriteLine("Update CheckPoint C1");
                     //MousePos will be subtituded by handPos and MouseOnClicked will be subtituded by gesture
-                    RunningApps[i].Update(RunningApps[i] == OnFocusApp, i, mousePos, Mouse.LeftButton, lastFrameSpeech != null && RunningApps[i] == OnFocusApp? lastFrameSpeech.Result.Text: "");
+                    RunningApps[i].Update(RunningApps[i] == OnFocusApp, i, mousePos, handState, 
+                        lastFrameSpeech != null && RunningApps[i] == OnFocusApp? lastFrameSpeech.Result.Text: "",
+                        lastFrameGesture != null && RunningApps[i] == OnFocusApp ? lastFrameGesture.Name.ToLower() : "");
                     //Trace.WriteLine("Update CheckPoint C2");
                 }
             }
@@ -116,20 +118,23 @@ namespace Project
 
         void Late_AddApp()
         {
-            for(int i = 0;i< List_ToBeAdded.Count;i++)
+            if (List_ToBeAdded.Count > 0)
             {
-                RunningApps.Insert(0, List_ToBeAdded[i]);
-                Switcher.RunningAppIcons.Add(new MiddleRightElement(List_ToBeAdded[i].Image_Normal, List_ToBeAdded[i].Image_Selecting, List_ToBeAdded[i]));
-                MainWindow.RenderManager.RenderList.Insert(1, new RenderManager.RenderClass(List_ToBeAdded[i]));
-                //Menu is always the first
-
-                foreach (MiddleRightElement element in Switcher.RunningAppIcons)
+                for (int i = 0; i < List_ToBeAdded.Count; i++)
                 {
-                    element.UpdateRect();
+                    RunningApps.Insert(0, List_ToBeAdded[i]);
+                    Switcher.RunningAppIcons.Add(new MiddleRightElement(List_ToBeAdded[i].Image_Normal, List_ToBeAdded[i].Image_Selecting, List_ToBeAdded[i]));
+                    MainWindow.RenderManager.RenderList.Insert(1, new RenderManager.RenderClass(List_ToBeAdded[i]));
+                    //Menu is always the first
+
+                    foreach (MiddleRightElement element in Switcher.RunningAppIcons)
+                    {
+                        element.UpdateRect();
+                    }
                 }
+                OnFocusApp = RunningApps[0];
+                List_ToBeAdded.Clear();
             }
-            OnFocusApp = RunningApps[0];
-            List_ToBeAdded.Clear();
         }
 
         void Late_RemoveApp()

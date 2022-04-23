@@ -15,7 +15,7 @@ namespace Project
 
         }
 
-        public override void Update(bool isFocusing, Point point, MouseButtonState mouseState)
+        public override void Update(bool isFocusing, Point point, Microsoft.Kinect.HandState handState)
         {
             //throw new NotImplementedException();
         }

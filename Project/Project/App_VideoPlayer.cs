@@ -17,6 +17,7 @@ namespace Project
         double app_AspectRatio;
         double video_AspectRatio;
         LocalControlUnit[] controlZones;
+        bool isPaused;
 
         public App_VideoPlayer(string path)
         {
@@ -45,9 +46,9 @@ namespace Project
             app_AspectRatio = Width / (double)Height;
         }
 
-        public override void Update(bool isFocusing, int listOrder, Point point, MouseButtonState mouseState, string command)
+        public override void Update(bool isFocusing, int listOrder, Point point, Microsoft.Kinect.HandState handState, string command, string gesture)
         {
-            base.Update(isFocusing, listOrder, point, mouseState, command);
+            base.Update(isFocusing, listOrder, point, handState, command, gesture);
 
             if (!isFocusing) return;
 
@@ -56,10 +57,34 @@ namespace Project
 
             foreach (LocalControlUnit unit in controlZones)
             {
-                unit.IsHoveringOrDragging(clampedX, clampedY, listOrder, mouseState);
+                unit.IsHoveringOrDragging(clampedX, clampedY, listOrder, handState);
             }
 
             VoiceControl(command);
+
+            GestureControl(gesture);
+        }
+
+        public override void GestureControl(string gesture)
+        {
+            switch(gesture)
+            {
+                case "pause":
+                    if (isPaused)
+                    {
+                        player.Play();
+                        MainWindow.mainWindow.DebugLine.Text = "Last Gesture Action: Play";
+                    }
+                    else
+                    {
+                        player.Pause();
+                        MainWindow.mainWindow.DebugLine.Text = "Last Gesture Action: Pause";
+                    }
+                    isPaused = !isPaused;
+
+                    MainWindow.mainWindow.ResetGestureTimer();
+                    break;
+            }
         }
 
         public override void VoiceControl(string command)
@@ -67,12 +92,15 @@ namespace Project
             switch (command)
             {
                 case "stop":
+                    isPaused = true;
                     player.Stop();
                     break;
                 case "pause":
+                    isPaused = true;
                     player.Pause();
                     break;
                 case "play":
+                    isPaused = false;
                     player.Play();
                     break;
                 case "volume up":

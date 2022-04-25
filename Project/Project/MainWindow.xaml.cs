@@ -116,6 +116,7 @@ namespace Project
             // let the convertStream know speech is going active
             kinectAudioStream.SpeechActive = true;
 
+            isDebug = true;
             if (isDebug)//Debug: true = normal mic, false = kinect mic
             {
                 Recognizer.SetInputToDefaultAudioDevice();
@@ -137,7 +138,8 @@ namespace Project
             //Debug
             //Manager.AddApp(new App_VideoPlayer("E:/School/CityU/221/SM3603/SM3603_Project/SampleVideos/277957136_1030137967586408_6026758252614106551_n.mp4"));
             //Manager.AddApp(new App_VideoPlayer("E:/School/CityU/221/SM3603/SM3603_Project/SampleVideos/277957136_1030137967586408_6026758252614106551_n.mp4"));
-            Manager.AddApp(new App_FileExplorer());
+            //Manager.AddApp(new App_FileExplorer());
+            Manager.AddApp(new App_Calculator());
             //Manager.AddApp(new App_ImageEditor("E:/School/CityU/221/SM3603/SM3603_Project/Test.png"));
         }
 
@@ -220,7 +222,7 @@ namespace Project
 
         private void Recognizer_SpeechRecognized(object sender, SpeechRecognizedEventArgs e)
         {
-            if (e.Result.Confidence > 0.6)
+            if (e.Result.Confidence > 0.3)
                 _lastFrameSpeech = e;
             Trace.WriteLine(e.Result.Text + " (" + e.Result.Confidence + ")");
         }
@@ -342,7 +344,7 @@ namespace Project
         void DrawPoint(Body body, DrawingContext dc, JointType jt, SolidColorBrush color)
         {
             Point pt = MapCameraPointToColorSpace(body, jt);
-            Console.WriteLine(pt.X + " , " + pt.Y);
+            //Console.WriteLine(pt.X + " , " + pt.Y);
             dc.DrawEllipse(color, null, new Point(pt.X < 10? 10:pt.X >= Drawing_Width - 10? Drawing_Width - 10:pt.X, pt.Y < 10 ? 10 : pt.Y >= Drawing_Height - 10 ? Drawing_Height - 10 : pt.Y), 10, 10);
         }
 

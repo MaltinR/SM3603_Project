@@ -99,7 +99,6 @@ E:\School\CityU\221\SM3603\SM3603_Project\SM3603_Project\Project\Project\bin\Deb
 E:\School\CityU\221\SM3603\SM3603_Project\SM3603_Project\Project\Project\bin\Debug\Microsoft.Kinect.VisualGestureBuilder.xml
 E:\School\CityU\221\SM3603\SM3603_Project\SM3603_Project\Project\Project\obj\Debug\Project.csproj.AssemblyReference.cache
 E:\School\CityU\221\SM3603\SM3603_Project\SM3603_Project\Project\Project\bin\Debug\Gestures\MyGestures.gbd
-D:\Users\User\Documents\GitHub\SM3603_Project\Project\Project\bin\Debug\Gestures\MyGestures.gbd
 D:\Users\User\Documents\GitHub\SM3603_Project\Project\Project\bin\Debug\Gestures\ProjectGestures.gbd
 D:\Users\User\Documents\GitHub\SM3603_Project\Project\Project\bin\Debug\Images\AreaSelection_Close_Normal.png
 D:\Users\User\Documents\GitHub\SM3603_Project\Project\Project\bin\Debug\Images\AreaSelection_Close_Selecting.png

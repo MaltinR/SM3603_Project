@@ -148,9 +148,9 @@ namespace Project
             bool isInRange = mousePosX > PosX + Parent.PosX && mousePosX < PosX + Parent.PosX + Width &&
                 mousePosY > PosY + Parent.PosY && mousePosY < PosY + Parent.PosY + Height;
 
-            if(MainWindow.Manager.RunningApps.Count > 0)
+            if (MainWindow.Manager.RunningApps.Count > 0)
             {
-                for (int i = 0;i < listOrder;i++)
+                for (int i = 0; i < listOrder; i++)
                 {
                     isInRange &= (mousePosX < MainWindow.Manager.RunningApps[i].PosX || mousePosX > MainWindow.Manager.RunningApps[i].PosX + MainWindow.Manager.RunningApps[i].Width) || (mousePosY < MainWindow.Manager.RunningApps[i].PosY || mousePosY > MainWindow.Manager.RunningApps[i].PosY + MainWindow.Manager.RunningApps[i].Height);
                 }
@@ -500,16 +500,16 @@ namespace Project
             {
                 //Percent Height = (Total - 5)/Total*Height
 
-                MainWindow.Manager.Switcher.height = (MainWindow.Manager.Switcher.RunningAppIcons.Count - 5) / (double)MainWindow.Manager.Switcher.RunningAppIcons.Count* Height;
-                
-                MainWindow.Manager.Switcher.percent = (mousePosY - (PosY + (Height - MainWindow.Manager.Switcher.height) /2))/ MainWindow.Manager.Switcher.height;
+                MainWindow.Manager.Switcher.height = (MainWindow.Manager.Switcher.RunningAppIcons.Count - 5) / (double)MainWindow.Manager.Switcher.RunningAppIcons.Count * Height;
+
+                MainWindow.Manager.Switcher.percent = (mousePosY - (PosY + (Height - MainWindow.Manager.Switcher.height) / 2)) / MainWindow.Manager.Switcher.height;
                 MainWindow.Manager.Switcher.percent = MainWindow.Manager.Switcher.percent < 0 ? 0 : MainWindow.Manager.Switcher.percent > 1 ? 1 : MainWindow.Manager.Switcher.percent;
             }
         }
 
         public override void Print()
         {
-            if(MainWindow.dragging == this && MainWindow.Manager.Switcher.RunningAppIcons.Count > 5)
+            if (MainWindow.dragging == this && MainWindow.Manager.Switcher.RunningAppIcons.Count > 5)
             {
                 //Cal the size
 
@@ -592,7 +592,7 @@ namespace Project
         {
             base.Print();
             int size = (int)((Parent as App_ImageEditor).BrushSize / 100.0 * 24);
-            MainWindow.RenderManager.DrawingContext.DrawRectangle(Brushes.Black, null, new Rect(Parent.PosX + PosX + 3+(24-size)/2, Parent.PosY + PosY + 3 + (24 - size)/2, size, size));
+            MainWindow.RenderManager.DrawingContext.DrawRectangle(Brushes.Black, null, new Rect(Parent.PosX + PosX + 3 + (24 - size) / 2, Parent.PosY + PosY + 3 + (24 - size) / 2, size, size));
         }
     }
 
@@ -727,7 +727,7 @@ namespace Project
             Parent = app;
             HoveringTime = 30;
 
-            switch(tool)
+            switch (tool)
             {
                 case App_ImageEditor.Tool.Line:
                     Image_Normal = new BitmapImage(new Uri("Images/ImageTool_Line_Normal.png", UriKind.Relative));
@@ -773,7 +773,7 @@ namespace Project
     //RGB & Size
     public class Image_Channel : LocalControlUnit
     {
-        public Image_ChannelSlider Slider {get; protected set; }
+        public Image_ChannelSlider Slider { get; protected set; }
         protected override void Dragging(int mousePosX, int mousePosY)
         {
             MainWindow.dragging = Slider;
@@ -808,7 +808,7 @@ namespace Project
             Parent = parent;
             IndexFromView = index;
 
-            HoveringTime = enableHover?45:-1;
+            HoveringTime = enableHover ? 45 : -1;
 
             PosX = 50;
             PosY = startPos;
@@ -822,7 +822,7 @@ namespace Project
         {
             (Parent as App_FileExplorer).highlighting = IndexFromView;
 
-            if(handState == Microsoft.Kinect.HandState.Lasso)
+            if (handState == Microsoft.Kinect.HandState.Lasso)
             {
                 (Parent as App_FileExplorer).ToggleSelect(IndexFromView);
             }
@@ -845,7 +845,7 @@ namespace Project
 
         public void SetHoveringTime(bool isHover)
         {
-            HoveringTime = isHover?60:-1;
+            HoveringTime = isHover ? 60 : -1;
         }
     }
 
@@ -1079,7 +1079,7 @@ namespace Project
             double percent = timePos / (double)Height;
 
             (Parent as App_VideoPlayer).player.Volume = 1.0 - percent;
-            draggingDetail.rect_VolumeButton = new Rect((Parent.PosX + PosX) + Width * 0.75 - 6, (Parent.PosY + PosY) + (percent * Height - 4) , 12, 4);
+            draggingDetail.rect_VolumeButton = new Rect((Parent.PosX + PosX) + Width * 0.75 - 6, (Parent.PosY + PosY) + (percent * Height - 4), 12, 4);
         }
 
         public override bool IsHoveringOrDragging(int mousePosX, int mousePosY, int listOrder, Microsoft.Kinect.HandState handState)
@@ -1178,6 +1178,57 @@ namespace Project
         protected override bool HoverTimesUp(int mousePosX, int mousePosY)
         {
             MainWindow.Manager.AddApp(new App_FileExplorer());
+            return false;
+        }
+    }
+
+    public class Calculator_test : LocalControlUnit{
+        int value; 
+
+         public Calculator_test(App_Calculator calculator, int value)
+        {
+            HoveringTime = 60;
+
+            Parent = calculator;
+            this.value = value;
+
+            switch (value)
+            {
+                case 0: // posx posy 
+                    Width = 100;
+                    Height = 100;
+                    PosX = 200;
+                    PosY = 275;
+                    break;
+                case 1: // posx posy 
+                    Width = 100;
+                    Height = 100;
+                    PosX = 300;
+                    PosY = 375;
+                    break;
+                default:
+                    Width = 100;
+                    Height = 100;
+                    PosX = 100;
+                    PosY = 175;
+                    break;
+            }
+
+            UpdateRect();
+        }
+
+        public override void Print()
+        {
+            //base.Print();
+            MainWindow.RenderManager.DrawingContext.DrawRectangle(Brushes.White, null, Rect);
+            //MainWindow.RenderManager.DrawingContext.DrawRectangle(Brushes.Gray, null, Rect);
+        }
+
+        protected override bool HoverTimesUp(int mousePosX, int mousePosY)
+        {
+            //MainWindow.Manager.AddApp(new App_FileExplorer());
+            // hovering to do 
+            (Parent as App_Calculator).Test(value);
             return false;
         }
     }

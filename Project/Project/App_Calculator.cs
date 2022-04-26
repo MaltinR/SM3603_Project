@@ -15,6 +15,8 @@ namespace Project
 {
     public class App_Calculator : NonDesktopApplication
     {
+        Calculator_test[] tests;
+
         public App_Calculator()
         {
             Image_Normal = new BitmapImage(new Uri("Images/Icon_Calculator_Normal.png", UriKind.Relative));
@@ -32,6 +34,8 @@ namespace Project
             {
                 MainWindow.mainWindow.BuildNewGrammar(grammar);
             }
+
+            tests = new Calculator_test[] { new Calculator_test(this, 0), new Calculator_test(this, 1), new Calculator_test(this, 2) };
 
             PosX = 100;//For testing
             LocalEdgeControl = new LocalEdgeControl(this);
@@ -64,13 +68,11 @@ namespace Project
 
             int clampedX = point.X < 0 ? 0 : point.X > MainWindow.Drawing_Width ? MainWindow.Drawing_Width : (int)point.X;
             int clampedY = point.Y < 0 ? 0 : point.Y > MainWindow.Drawing_Height ? MainWindow.Drawing_Height : (int)point.Y;
-
-            /*
-            foreach (LocalControlUnit unit in controlZones)
+                        
+            foreach (Calculator_test unit in tests)
             {
                 unit.IsHoveringOrDragging(clampedX, clampedY, listOrder, handState);
             }
-            */
 
             VoiceControl(command);
 
@@ -732,5 +734,10 @@ namespace Project
                     break;
             }
         }
+        public void Test(int value)
+        {
+
+        }
     }
+
 }

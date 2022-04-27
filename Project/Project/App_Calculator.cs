@@ -15,7 +15,7 @@ namespace Project
 {
     public class App_Calculator : NonDesktopApplication
     {
-        Calculator_test[] tests;
+        Calculator_Functions[] Calculator_Functions;
 
         public App_Calculator()
         {
@@ -28,16 +28,25 @@ namespace Project
                                 "eleven","twelve","thirteen","fourteen","fifteen","sixteen","seventeen","eighteen","nineteen","twenty",
                                 "thirty","forty","fifty","sixty","seventy","eighty","ninety","hundred","thousand",
                                 "million","billion","trillion","quadrillion","quintillion",
-                                "plus","minus","negative","times","multiply","divide","point","dot","percent","answer","equal","equals","reset","clear"}) };
+                                "plus","minus","negative","times","multiply","over","divide","point","dot","percent","answer","equal","equals","reset","clear"}) };
 
             foreach (Microsoft.Speech.Recognition.Grammar grammar in Grammars)
             {
                 MainWindow.mainWindow.BuildNewGrammar(grammar);
             }
 
-            tests = new Calculator_test[] { new Calculator_test(this, 0), new Calculator_test(this, 1), new Calculator_test(this, 2) };
-
+            MinimumHeight = 400;
+            MinimumWidth = 320;
+            Height = MinimumHeight;
+            Width = MinimumWidth;
             PosX = 100;//For testing
+            PosY = 100;//For testing
+            Calculator_Functions = new Calculator_Functions[] { new Calculator_Functions(this, '0'), new Calculator_Functions(this, '1'), new Calculator_Functions(this, '2'),
+                                                new Calculator_Functions(this, '3'), new Calculator_Functions(this, '4'), new Calculator_Functions(this, '5'), new Calculator_Functions(this, '6'),
+                                                new Calculator_Functions(this, '7'), new Calculator_Functions(this, '8'), new Calculator_Functions(this, '9'), new Calculator_Functions(this, '+'),
+                                                new Calculator_Functions(this, 'x'), new Calculator_Functions(this, '/'), new Calculator_Functions(this, '='), new Calculator_Functions(this, '.'),
+                                                new Calculator_Functions(this, '-'), new Calculator_Functions(this, '%'), new Calculator_Functions(this, 'C') /*ON/OFF*/ };
+
             LocalEdgeControl = new LocalEdgeControl(this);
             Rect = new Rect(PosX, PosY, Width, Height);
         }
@@ -45,19 +54,33 @@ namespace Project
         public override void Print()
         {
             //base.Print();
+            MainWindow.RenderManager.DrawingContext.DrawRectangle(Brushes.Black, null, Rect);
 
-            FormattedText pathFormattedText = new FormattedText("Calculating: " + formula + unfinishedFormula,
+            foreach (Calculator_Functions unit in Calculator_Functions)
+            {
+                unit.Print();
+            }
+
+            FormattedText pathFormattedText = new FormattedText(formula + unfinishedFormula == "" ? "0" : formula + unfinishedFormula,
                 CultureInfo.GetCultureInfo("en-us"),
                 FlowDirection.LeftToRight,
                 new Typeface("Verdana"),
-                10,
-                Brushes.Black, 30);
-
-            pathFormattedText.MaxTextWidth = Width - 10;
-            pathFormattedText.MaxTextHeight = 28;
+                36,
+                Brushes.White, 30);
+            pathFormattedText.TextAlignment = TextAlignment.Right;
             pathFormattedText.Trimming = TextTrimming.CharacterEllipsis;
-            MainWindow.RenderManager.DrawingContext.DrawText(pathFormattedText, new Point(PosX + 5, PosY + 10));
+            MainWindow.RenderManager.DrawingContext.DrawText(pathFormattedText, new Point(PosX + 312, PosY + 28));
             LocalEdgeControl.Print();
+        }
+
+        public override void UpdateRect()
+        {
+            base.UpdateRect();
+
+            foreach (Calculator_Functions unit in Calculator_Functions)
+            {
+                unit.UpdateRect();
+            }
         }
 
         public override void Update(bool isFocusing, int listOrder, Point point, Microsoft.Kinect.HandState handState, string command, string gesture)
@@ -69,7 +92,7 @@ namespace Project
             int clampedX = point.X < 0 ? 0 : point.X > MainWindow.Drawing_Width ? MainWindow.Drawing_Width : (int)point.X;
             int clampedY = point.Y < 0 ? 0 : point.Y > MainWindow.Drawing_Height ? MainWindow.Drawing_Height : (int)point.Y;
                         
-            foreach (Calculator_test unit in tests)
+            foreach (Calculator_Functions unit in Calculator_Functions)
             {
                 unit.IsHoveringOrDragging(clampedX, clampedY, listOrder, handState);
             }
@@ -92,6 +115,7 @@ namespace Project
         };
         public static double ConvertToNumbers(string numberString)
         {
+            if (numberString.Length == 0) return 0;
             string tempString = numberString[numberString.Length - 1] == ' ' ? numberString.Remove(numberString.Length - 1, 1) : numberString;
             var numbers = Regex.Matches(tempString, @"\w+").Cast<Match>()
                     .Select(m => m.Value.ToLowerInvariant())
@@ -643,6 +667,7 @@ namespace Project
                     isPercent = false;
                     operators.Add('*');
                     break;
+                case "over":
                 case "divide":
                     if (formula.EndsWith(" / ")) break;
                     formula += unfinishedFormula + " / ";
@@ -669,8 +694,11 @@ namespace Project
                     operators.Add('/');
                     break;
                 case "percent":
-                    unfinishedFormula += "%";
-                    isPercent = true;
+                    if (!isPercent)
+                    {
+                        unfinishedFormula += "%";
+                        isPercent = true;
+                    }
                     break;
                 case "negative":
                     if (!isNegative)
@@ -685,7 +713,12 @@ namespace Project
                     }
                     break;
                 case "point": case "dot":
-                    if (unfinishedFormula == "" || hasDecimal) break;
+                    if (hasDecimal) break;
+                    if (unfinishedFormula == "")
+                    {
+                        unfinishedFormula = "0";
+                        tempValueString += "zero ";
+                    }
                     unfinishedFormula += ".";
                     tempValue = ConvertToNumbers(tempValueString) * (isNegative ? -1 : 1);
                     tempValueString = "";
@@ -734,9 +767,203 @@ namespace Project
                     break;
             }
         }
-        public void Test(int value)
+        public void Calculator_Buttons_Functions(char functionKey)
         {
-
+            switch (functionKey)
+            {
+                case '0':
+                    PosX = 8;
+                    PosY = 335;
+                    break;
+                case '1':
+                    PosX = 8;
+                    PosY = 270;
+                    break;
+                case '2':
+                    PosX = 86;
+                    PosY = 270;
+                    break;
+                case '3':
+                    PosX = 164;
+                    PosY = 270;
+                    break;
+                case '4':
+                    PosX = 8;
+                    PosY = 205;
+                    break;
+                case '5':
+                    PosX = 86;
+                    PosY = 205;
+                    break;
+                case '6':
+                    PosX = 164;
+                    PosY = 205;
+                    break;
+                case '7':
+                    PosX = 8;
+                    PosY = 140;
+                    break;
+                case '8':
+                    PosX = 86;
+                    PosY = 140;
+                    break;
+                case '9':
+                    PosX = 164;
+                    PosY = 140;
+                    break;
+                case '.':
+                    if (unfinishedFormula == "" || hasDecimal) break;
+                    unfinishedFormula += ".";
+                    tempValue = ConvertToNumbers(tempValueString) * (isNegative ? -1 : 1);
+                    tempValueString = "";
+                    isNegative = false;
+                    hasDecimal = true;
+                    break;
+                case '=':
+                    if (operators.Count() == 0) break;
+                    formula += unfinishedFormula + " = ";
+                    if (hasDecimal)
+                    {
+                        double tempDecimal = ConvertToNumbers(tempValueString);
+                        values.Add((tempValue + tempDecimal * Math.Pow(10, -tempDecimal.ToString().Length)) * (isPercent ? 0.01f : 1));
+                        tempValue = 0;
+                    }
+                    else values.Add(ConvertToNumbers(tempValueString) * (isNegative ? -1 : 1) * (isPercent ? 0.01f : 1));
+                    tempValueString = "";
+                    unfinishedFormula = "";
+                    isNegative = false;
+                    hasDecimal = false;
+                    isPercent = false;
+                    // todo: output answer
+                    answer = CalculateAnswer();
+                    formula = answer.ToString();
+                    displayingAnswer = true;
+                    values.Clear();
+                    operators.Clear();
+                    break;
+                case '+':
+                    if (formula.EndsWith(" + ")) break;
+                    formula += unfinishedFormula + " + ";
+                    unfinishedFormula = "";
+                    if (displayingAnswer)
+                    {
+                        values.Add(answer);
+                        displayingAnswer = false;
+                    }
+                    else
+                    {
+                        if (hasDecimal)
+                        {
+                            double tempDecimal = ConvertToNumbers(tempValueString);
+                            values.Add((tempValue + tempDecimal * Math.Pow(10, -tempDecimal.ToString().Length)) * (isPercent ? 0.01f : 1));
+                            tempValue = 0;
+                        }
+                        else values.Add(ConvertToNumbers(tempValueString) * (isNegative ? -1 : 1) * (isPercent ? 0.01f : 1));
+                    }
+                    tempValueString = "";
+                    isNegative = false;
+                    hasDecimal = false;
+                    isPercent = false;
+                    operators.Add('+');
+                    break;
+                case '-':
+                    if (formula.EndsWith(" - ")) break;
+                    formula += unfinishedFormula + " - ";
+                    unfinishedFormula = "";
+                    if (displayingAnswer)
+                    {
+                        values.Add(answer);
+                        displayingAnswer = false;
+                    }
+                    else
+                    {
+                        if (hasDecimal)
+                        {
+                            double tempDecimal = ConvertToNumbers(tempValueString);
+                            values.Add((tempValue + tempDecimal * Math.Pow(10, -tempDecimal.ToString().Length)) * (isPercent ? 0.01f : 1));
+                            tempValue = 0;
+                        }
+                        else values.Add(ConvertToNumbers(tempValueString) * (isNegative ? -1 : 1) * (isPercent ? 0.01f : 1));
+                    }
+                    tempValueString = "";
+                    isNegative = false;
+                    hasDecimal = false;
+                    isPercent = false;
+                    operators.Add('-');
+                    break;
+                case 'x':
+                    if (formula.EndsWith(" x ")) break;
+                    formula += unfinishedFormula + " x ";
+                    unfinishedFormula = "";
+                    if (displayingAnswer)
+                    {
+                        values.Add(answer);
+                        displayingAnswer = false;
+                    }
+                    else
+                    {
+                        if (hasDecimal)
+                        {
+                            double tempDecimal = ConvertToNumbers(tempValueString);
+                            values.Add((tempValue + tempDecimal * Math.Pow(10, -tempDecimal.ToString().Length)) * (isPercent ? 0.01f : 1));
+                            tempValue = 0;
+                        }
+                        else values.Add(ConvertToNumbers(tempValueString) * (isNegative ? -1 : 1) * (isPercent ? 0.01f : 1));
+                    }
+                    tempValueString = "";
+                    isNegative = false;
+                    hasDecimal = false;
+                    isPercent = false;
+                    operators.Add('*');
+                    break;
+                case '/':
+                    if (formula.EndsWith(" / ")) break;
+                    formula += unfinishedFormula + " / ";
+                    unfinishedFormula = "";
+                    if (displayingAnswer)
+                    {
+                        values.Add(answer);
+                        displayingAnswer = false;
+                    }
+                    else
+                    {
+                        if (hasDecimal)
+                        {
+                            double tempDecimal = ConvertToNumbers(tempValueString);
+                            values.Add((tempValue + tempDecimal * Math.Pow(10, -tempDecimal.ToString().Length)) * (isPercent ? 0.01f : 1));
+                            tempValue = 0;
+                        }
+                        else values.Add(ConvertToNumbers(tempValueString) * (isNegative ? -1 : 1) * (isPercent ? 0.01f : 1));
+                    }
+                    tempValueString = "";
+                    isNegative = false;
+                    hasDecimal = false;
+                    isPercent = false;
+                    operators.Add('/');
+                    break;
+                case '%':
+                    if (!isPercent)
+                    {
+                        unfinishedFormula += "%";
+                        isPercent = true;
+                    }
+                    break;
+                case 'C':
+                    // todo: reset
+                    tempValueString = "";
+                    formula = "";
+                    unfinishedFormula = "";
+                    isNegative = false;
+                    hasDecimal = false;
+                    displayingAnswer = false;
+                    isPercent = false;
+                    values.Clear();
+                    operators.Clear();
+                    answer = 0;
+                    break;
+                default:
+                    break;
+            }
         }
     }
 

@@ -8,6 +8,7 @@ using System.Windows;
 using System.Windows.Input;
 using System.Windows.Media.Imaging;
 using System.Diagnostics;
+using System.Globalization;
 
 namespace Project
 {
@@ -1182,35 +1183,103 @@ namespace Project
         }
     }
 
-    public class Calculator_test : LocalControlUnit{
-        int value; 
+    public class Calculator_Functions : LocalControlUnit{
+        char functionKey;
+        SolidColorBrush color;
 
-         public Calculator_test(App_Calculator calculator, int value)
+        public Calculator_Functions(App_Calculator calculator, char functionKey)
         {
             HoveringTime = 60;
 
             Parent = calculator;
-            this.value = value;
+            this.functionKey = functionKey;
+            color = Brushes.Gray;
 
-            switch (value)
+            Height = 55;
+            Width = 70;
+
+            switch (functionKey)
             {
-                case 0: // posx posy 
-                    Width = 100;
-                    Height = 100;
-                    PosX = 200;
-                    PosY = 275;
+                case '0':
+                    PosX = 8;
+                    PosY = 335;
                     break;
-                case 1: // posx posy 
-                    Width = 100;
-                    Height = 100;
-                    PosX = 300;
-                    PosY = 375;
+                case '1':
+                    PosX = 8;
+                    PosY = 270;
+                    break;
+                case '2':
+                    PosX = 86;
+                    PosY = 270;
+                    break;
+                case '3':
+                    PosX = 164;
+                    PosY = 270;
+                    break;
+                case '4':
+                    PosX = 8;
+                    PosY = 205;
+                    break;
+                case '5':
+                    PosX = 86;
+                    PosY = 205;
+                    break;
+                case '6':
+                    PosX = 164;
+                    PosY = 205;
+                    break;
+                case '7':
+                    PosX = 8;
+                    PosY = 140;
+                    break;
+                case '8':
+                    PosX = 86;
+                    PosY = 140;
+                    break;
+                case '9':
+                    PosX = 164;
+                    PosY = 140;
+                    break;
+                case '.':
+                    PosX = 86;
+                    PosY = 335;
+                    break;
+                case '=':
+                    PosX = 164;
+                    PosY = 335;
+                    break;
+                case '+':
+                    PosX = 242;
+                    PosY = 270;
+                    Height = 120;
+                    break;
+                case '-':
+                    PosX = 242;
+                    PosY = 205;
+                    break;
+                case 'x':
+                    PosX = 242;
+                    PosY = 140;
+                    break;
+                case '/':
+                    PosX = 242;
+                    PosY = 75;
+                    break;
+                case '%':
+                    PosX = 164;
+                    PosY = 75;
+                    break;
+                case 'C':
+                    PosX = 8;
+                    Width = 148;
+                    PosY = 75;
                     break;
                 default:
-                    Width = 100;
-                    Height = 100;
-                    PosX = 100;
-                    PosY = 175;
+                    Width = 320;
+                    Height = 400;
+                    PosX = 0;
+                    PosY = 0;
+                    color = Brushes.Black;
                     break;
             }
 
@@ -1220,15 +1289,22 @@ namespace Project
         public override void Print()
         {
             //base.Print();
-            MainWindow.RenderManager.DrawingContext.DrawRectangle(Brushes.White, null, Rect);
-            //MainWindow.RenderManager.DrawingContext.DrawRectangle(Brushes.Gray, null, Rect);
+            MainWindow.RenderManager.DrawingContext.DrawRectangle(color, null, Rect);
+            FormattedText pathFormattedText = new FormattedText(functionKey + "",
+                CultureInfo.GetCultureInfo("en-us"),
+                FlowDirection.RightToLeft,
+                new Typeface("Verdana"),
+                24,
+                Brushes.White, 30);
+            pathFormattedText.Trimming = TextTrimming.CharacterEllipsis;
+            MainWindow.RenderManager.DrawingContext.DrawText(pathFormattedText, new Point(Rect.X + 30, Rect.Y + 20));
         }
 
         protected override bool HoverTimesUp(int mousePosX, int mousePosY)
         {
             //MainWindow.Manager.AddApp(new App_FileExplorer());
             // hovering to do 
-            (Parent as App_Calculator).Test(value);
+            (Parent as App_Calculator).Calculator_Buttons_Functions(functionKey);
             return false;
         }
     }

@@ -595,7 +595,7 @@ namespace Project
                 case "plus":
                     if (formula.EndsWith(" + ")) break;
                     formula += unfinishedFormula + " + ";
-                    unfinishedFormula = "";
+                    
                     if (!keyPressed)
                     {
                         if (displayingAnswer)
@@ -619,6 +619,7 @@ namespace Project
                         values.Add(int.Parse(unfinishedFormula));
                     }
                     tempValueString = "";
+                    unfinishedFormula = "";
                     isNegative = false;
                     hasDecimal = false;
                     isPercent = false;
@@ -628,7 +629,7 @@ namespace Project
                 case "minus":
                     if (formula.EndsWith(" - ")) break;
                     formula += unfinishedFormula + " - ";
-                    unfinishedFormula = "";
+                    
                     if (!keyPressed)
                     {
                         if (displayingAnswer)
@@ -651,6 +652,7 @@ namespace Project
                     {
                         values.Add(int.Parse(unfinishedFormula));
                     }
+                    unfinishedFormula = "";
                     tempValueString = "";
                     isNegative = false;
                     hasDecimal = false;
@@ -662,7 +664,7 @@ namespace Project
                 case "multiply":
                     if (formula.EndsWith(" x ")) break;
                     formula += unfinishedFormula + " x ";
-                    unfinishedFormula = "";
+                    
                     if (!keyPressed)
                     {
                         if (displayingAnswer)
@@ -685,6 +687,7 @@ namespace Project
                     {
                         values.Add(int.Parse(unfinishedFormula));
                     }
+                    unfinishedFormula = "";
                     tempValueString = "";
                     isNegative = false;
                     hasDecimal = false;
@@ -696,7 +699,7 @@ namespace Project
                 case "divide":
                     if (formula.EndsWith(" / ")) break;
                     formula += unfinishedFormula + " / ";
-                    unfinishedFormula = "";
+                    
                     if (!keyPressed)
                     {
                         if (displayingAnswer)
@@ -720,6 +723,7 @@ namespace Project
                         values.Add(int.Parse(unfinishedFormula));
                     }
                     tempValueString = "";
+                    unfinishedFormula = "";
                     isNegative = false;
                     hasDecimal = false;
                     keyPressed = false;
@@ -896,7 +900,7 @@ namespace Project
                 case '+':
                     if (formula.EndsWith(" + ")) break;
                     formula += unfinishedFormula + " + ";
-                    unfinishedFormula = "";
+                    
                     if (!keyPressed)
                     {
                         if (displayingAnswer)
@@ -919,6 +923,7 @@ namespace Project
                     {
                         values.Add(int.Parse(unfinishedFormula));
                     }
+                    unfinishedFormula = "";
                     tempValueString = "";
                     isNegative = false;
                     keyPressed = false;
@@ -929,7 +934,7 @@ namespace Project
                 case '-':
                     if (formula.EndsWith(" - ")) break;
                     formula += unfinishedFormula + " - ";
-                    unfinishedFormula = "";
+                    
                     if (!keyPressed)
                     {
                         if (displayingAnswer)
@@ -952,6 +957,7 @@ namespace Project
                     {
                         values.Add(int.Parse(unfinishedFormula));
                     }
+                    unfinishedFormula = "";
                     tempValueString = "";
                     isNegative = false;
                     hasDecimal = false;
@@ -962,7 +968,7 @@ namespace Project
                 case 'x':
                     if (formula.EndsWith(" x ")) break;
                     formula += unfinishedFormula + " x ";
-                    unfinishedFormula = "";
+                    
                     if (!keyPressed)
                     {
                         if (displayingAnswer)
@@ -985,6 +991,7 @@ namespace Project
                     {
                         values.Add(int.Parse(unfinishedFormula));
                     }
+                    unfinishedFormula = "";
                     tempValueString = "";
                     isNegative = false;
                     hasDecimal = false;
@@ -995,7 +1002,7 @@ namespace Project
                 case '/':
                     if (formula.EndsWith(" / ")) break;
                     formula += unfinishedFormula + " / ";
-                    unfinishedFormula = "";
+                    
                     if (!keyPressed)
                     {
                         if (displayingAnswer)
@@ -1018,6 +1025,7 @@ namespace Project
                     {
                         values.Add(int.Parse(unfinishedFormula));
                     }
+                    unfinishedFormula = "";
                     tempValueString = "";
                     isNegative = false;
                     hasDecimal = false;

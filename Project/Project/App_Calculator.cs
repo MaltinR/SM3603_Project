@@ -191,6 +191,7 @@ namespace Project
         public bool hasDecimal = false;
         public bool isPercent = false;
         public bool displayingAnswer = false;
+        public bool keyPressed = false;
 
         public bool CheckAvailableInput(int digits)
         {
@@ -330,7 +331,7 @@ namespace Project
                     unfinishedFormula = ConvertToNumbers(tempValueString).ToString();
                     break;
                 case "nine":
-                    if (!CheckAvailableInput(1)) break;
+                    if (!keyPressed && !CheckAvailableInput(1)) break;
                     if (displayingAnswer)
                     {
                         formula = "";
@@ -340,7 +341,7 @@ namespace Project
                     unfinishedFormula = ConvertToNumbers(tempValueString).ToString();
                     break;
                 case "ten":
-                    if (!CheckAvailableInput(2)) break;
+                    if (!keyPressed && !CheckAvailableInput(2)) break;
                     if (displayingAnswer)
                     {
                         formula = "";
@@ -350,7 +351,7 @@ namespace Project
                     unfinishedFormula = ConvertToNumbers(tempValueString).ToString();
                     break;
                 case "eleven":
-                    if (!CheckAvailableInput(2)) break;
+                    if (!keyPressed && !CheckAvailableInput(2)) break;
                     if (displayingAnswer)
                     {
                         formula = "";
@@ -360,7 +361,7 @@ namespace Project
                     unfinishedFormula = ConvertToNumbers(tempValueString).ToString();
                     break;
                 case "twelve":
-                    if (!CheckAvailableInput(2)) break;
+                    if (!keyPressed && !CheckAvailableInput(2)) break;
                     if (displayingAnswer)
                     {
                         formula = "";
@@ -370,7 +371,7 @@ namespace Project
                     unfinishedFormula = ConvertToNumbers(tempValueString).ToString();
                     break;
                 case "thirteen":
-                    if (!CheckAvailableInput(2)) break;
+                    if (!keyPressed && !CheckAvailableInput(2)) break;
                     if (displayingAnswer)
                     {
                         formula = "";
@@ -380,7 +381,7 @@ namespace Project
                     unfinishedFormula = ConvertToNumbers(tempValueString).ToString();
                     break;
                 case "fourteen":
-                    if (!CheckAvailableInput(2)) break;
+                    if (!keyPressed && !CheckAvailableInput(2)) break;
                     if (displayingAnswer)
                     {
                         formula = "";
@@ -390,7 +391,7 @@ namespace Project
                     unfinishedFormula = ConvertToNumbers(tempValueString).ToString();
                     break;
                 case "fifteen":
-                    if (!CheckAvailableInput(2)) break;
+                    if (!keyPressed && !CheckAvailableInput(2)) break;
                     if (displayingAnswer)
                     {
                         formula = "";
@@ -400,7 +401,7 @@ namespace Project
                     unfinishedFormula = ConvertToNumbers(tempValueString).ToString();
                     break;
                 case "sixteen":
-                    if (!CheckAvailableInput(2)) break;
+                    if (!keyPressed && !CheckAvailableInput(2)) break;
                     if (displayingAnswer)
                     {
                         formula = "";
@@ -410,7 +411,7 @@ namespace Project
                     unfinishedFormula = ConvertToNumbers(tempValueString).ToString();
                     break;
                 case "seventeen":
-                    if (!CheckAvailableInput(2)) break;
+                    if (!keyPressed && !CheckAvailableInput(2)) break;
                     if (displayingAnswer)
                     {
                         formula = "";
@@ -420,7 +421,7 @@ namespace Project
                     unfinishedFormula = ConvertToNumbers(tempValueString).ToString();
                     break;
                 case "eighteen":
-                    if (!CheckAvailableInput(2)) break;
+                    if (!keyPressed && !CheckAvailableInput(2)) break;
                     if (displayingAnswer)
                     {
                         formula = "";
@@ -430,7 +431,7 @@ namespace Project
                     unfinishedFormula = ConvertToNumbers(tempValueString).ToString();
                     break;
                 case "nineteen":
-                    if (!CheckAvailableInput(2)) break;
+                    if (!keyPressed && !CheckAvailableInput(2)) break;
                     if (displayingAnswer)
                     {
                         formula = "";
@@ -440,7 +441,7 @@ namespace Project
                     unfinishedFormula = ConvertToNumbers(tempValueString).ToString();
                     break;
                 case "twenty":
-                    if (!CheckAvailableInput(2)) break;
+                    if (!keyPressed && !CheckAvailableInput(2)) break;
                     if (displayingAnswer)
                     {
                         formula = "";
@@ -450,7 +451,7 @@ namespace Project
                     unfinishedFormula = ConvertToNumbers(tempValueString).ToString();
                     break;
                 case "thirty":
-                    if (!CheckAvailableInput(2)) break;
+                    if (!keyPressed && !CheckAvailableInput(2)) break;
                     if (displayingAnswer)
                     {
                         formula = "";
@@ -460,7 +461,7 @@ namespace Project
                     unfinishedFormula = ConvertToNumbers(tempValueString).ToString();
                     break;
                 case "fourty":
-                    if (!CheckAvailableInput(2)) break;
+                    if (!keyPressed && !CheckAvailableInput(2)) break;
                     if (displayingAnswer)
                     {
                         formula = "";
@@ -470,7 +471,7 @@ namespace Project
                     unfinishedFormula = ConvertToNumbers(tempValueString).ToString();
                     break;
                 case "fifty":
-                    if (!CheckAvailableInput(2)) break;
+                    if (!keyPressed && !CheckAvailableInput(2)) break;
                     if (displayingAnswer)
                     {
                         formula = "";
@@ -480,7 +481,7 @@ namespace Project
                     unfinishedFormula = ConvertToNumbers(tempValueString).ToString();
                     break;
                 case "sixty":
-                    if (!CheckAvailableInput(2)) break;
+                    if (!keyPressed && !CheckAvailableInput(2)) break;
                     if (displayingAnswer)
                     {
                         formula = "";
@@ -490,7 +491,7 @@ namespace Project
                     unfinishedFormula = ConvertToNumbers(tempValueString).ToString();
                     break;
                 case "seventy":
-                    if (!CheckAvailableInput(2)) break;
+                    if (!keyPressed && !CheckAvailableInput(2)) break;
                     if (displayingAnswer)
                     {
                         formula = "";
@@ -500,7 +501,7 @@ namespace Project
                     unfinishedFormula = ConvertToNumbers(tempValueString).ToString();
                     break;
                 case "eighty":
-                    if (!CheckAvailableInput(2)) break;
+                    if (!keyPressed && !CheckAvailableInput(2)) break;
                     if (displayingAnswer)
                     {
                         formula = "";
@@ -510,7 +511,7 @@ namespace Project
                     unfinishedFormula = ConvertToNumbers(tempValueString).ToString();
                     break;
                 case "ninety":
-                    if (!CheckAvailableInput(2)) break;
+                    if (!keyPressed && !CheckAvailableInput(2)) break;
                     if (displayingAnswer)
                     {
                         formula = "";
@@ -520,7 +521,7 @@ namespace Project
                     unfinishedFormula = ConvertToNumbers(tempValueString).ToString();
                     break;
                 case "hundred":
-                    if (!CheckAvailableInput(3)) break;
+                    if (!keyPressed && !CheckAvailableInput(3)) break;
                     if (displayingAnswer)
                     {
                         formula = "";
@@ -530,7 +531,7 @@ namespace Project
                     unfinishedFormula = ConvertToNumbers(tempValueString).ToString();
                     break;
                 case "thousand":
-                    if (!CheckAvailableInput(4)) break;
+                    if (!keyPressed && !CheckAvailableInput(4)) break;
                     if (displayingAnswer)
                     {
                         formula = "";
@@ -540,7 +541,7 @@ namespace Project
                     unfinishedFormula = ConvertToNumbers(tempValueString).ToString();
                     break;
                 case "million":
-                    if (!CheckAvailableInput(7)) break;
+                    if (!keyPressed && !CheckAvailableInput(7)) break;
                     if (displayingAnswer)
                     {
                         formula = "";
@@ -550,7 +551,7 @@ namespace Project
                     unfinishedFormula = ConvertToNumbers(tempValueString).ToString();
                     break;
                 case "billion":
-                    if (!CheckAvailableInput(10)) break;
+                    if (!keyPressed && !CheckAvailableInput(10)) break;
                     if (displayingAnswer)
                     {
                         formula = "";
@@ -560,7 +561,7 @@ namespace Project
                     unfinishedFormula = ConvertToNumbers(tempValueString).ToString();
                     break;
                 case "trillion":
-                    if (!CheckAvailableInput(13)) break;
+                    if (!keyPressed && !CheckAvailableInput(13)) break;
                     if (displayingAnswer)
                     {
                         formula = "";
@@ -570,7 +571,7 @@ namespace Project
                     unfinishedFormula = ConvertToNumbers(tempValueString).ToString();
                     break;
                 case "quadrillion":
-                    if (!CheckAvailableInput(16)) break;
+                    if (!keyPressed && !CheckAvailableInput(16)) break;
                     if (displayingAnswer)
                     {
                         formula = "";
@@ -580,7 +581,7 @@ namespace Project
                     unfinishedFormula = ConvertToNumbers(tempValueString).ToString();
                     break;
                 case "quintillion":
-                    if (!CheckAvailableInput(19)) break;
+                    if (!keyPressed && !CheckAvailableInput(19)) break;
                     if (displayingAnswer)
                     {
                         formula = "";
@@ -595,38 +596,48 @@ namespace Project
                     if (formula.EndsWith(" + ")) break;
                     formula += unfinishedFormula + " + ";
                     unfinishedFormula = "";
-                    if (displayingAnswer)
+                    if (!keyPressed)
                     {
-                        values.Add(answer);
-                        displayingAnswer = false;
+                        if (displayingAnswer)
+                        {
+                            values.Add(answer);
+                            displayingAnswer = false;
+                        }
+                        else
+                        {
+                            if (hasDecimal)
+                            {
+                                double tempDecimal = ConvertToNumbers(tempValueString);
+                                values.Add((tempValue + tempDecimal * Math.Pow(10, -tempDecimal.ToString().Length)) * (isPercent ? 0.01f : 1));
+                                tempValue = 0;
+                            }
+                            else values.Add(ConvertToNumbers(tempValueString) * (isNegative ? -1 : 1) * (isPercent ? 0.01f : 1));
+                        }
                     }
                     else
                     {
-                        if (hasDecimal)
-                        {
-                            double tempDecimal = ConvertToNumbers(tempValueString);
-                            values.Add((tempValue + tempDecimal * Math.Pow(10, -tempDecimal.ToString().Length)) * (isPercent ? 0.01f : 1));
-                            tempValue = 0;
-                        }
-                        else values.Add(ConvertToNumbers(tempValueString) * (isNegative ? -1 : 1) * (isPercent ? 0.01f : 1));
+                        values.Add(int.Parse(unfinishedFormula));
                     }
                     tempValueString = "";
                     isNegative = false;
                     hasDecimal = false;
                     isPercent = false;
+                    keyPressed = false;
                     operators.Add('+');
                     break;
                 case "minus":
                     if (formula.EndsWith(" - ")) break;
                     formula += unfinishedFormula + " - ";
                     unfinishedFormula = "";
-                    if (displayingAnswer)
+                    if (!keyPressed)
                     {
-                        values.Add(answer);
-                        displayingAnswer = false;
-                    }
-                    else
-                    {
+                        if (displayingAnswer)
+                        {
+                            values.Add(answer);
+                            displayingAnswer = false;
+                        }
+                        else
+                        {
                         if (hasDecimal)
                         {
                             double tempDecimal = ConvertToNumbers(tempValueString);
@@ -634,11 +645,17 @@ namespace Project
                             tempValue = 0;
                         }
                         else values.Add(ConvertToNumbers(tempValueString) * (isNegative ? -1 : 1) * (isPercent ? 0.01f : 1));
+                        }
+                    }
+                    else
+                    {
+                        values.Add(int.Parse(unfinishedFormula));
                     }
                     tempValueString = "";
                     isNegative = false;
                     hasDecimal = false;
                     isPercent = false;
+                    keyPressed = false;
                     operators.Add('-');
                     break;
                 case "times":
@@ -646,24 +663,32 @@ namespace Project
                     if (formula.EndsWith(" x ")) break;
                     formula += unfinishedFormula + " x ";
                     unfinishedFormula = "";
-                    if (displayingAnswer)
+                    if (!keyPressed)
                     {
-                        values.Add(answer);
-                        displayingAnswer = false;
+                        if (displayingAnswer)
+                        {
+                            values.Add(answer);
+                            displayingAnswer = false;
+                        }
+                        else
+                        {
+                            if (hasDecimal)
+                            {
+                                double tempDecimal = ConvertToNumbers(tempValueString);
+                                values.Add((tempValue + tempDecimal * Math.Pow(10, -tempDecimal.ToString().Length)) * (isPercent ? 0.01f : 1));
+                                tempValue = 0;
+                            }
+                            else values.Add(ConvertToNumbers(tempValueString) * (isNegative ? -1 : 1) * (isPercent ? 0.01f : 1));
+                        }
                     }
                     else
                     {
-                        if (hasDecimal)
-                        {
-                            double tempDecimal = ConvertToNumbers(tempValueString);
-                            values.Add((tempValue + tempDecimal * Math.Pow(10, -tempDecimal.ToString().Length)) * (isPercent ? 0.01f : 1));
-                            tempValue = 0;
-                        }
-                        else values.Add(ConvertToNumbers(tempValueString) * (isNegative ? -1 : 1) * (isPercent ? 0.01f : 1));
+                        values.Add(int.Parse(unfinishedFormula));
                     }
                     tempValueString = "";
                     isNegative = false;
                     hasDecimal = false;
+                    keyPressed = false;
                     isPercent = false;
                     operators.Add('*');
                     break;
@@ -672,29 +697,37 @@ namespace Project
                     if (formula.EndsWith(" / ")) break;
                     formula += unfinishedFormula + " / ";
                     unfinishedFormula = "";
-                    if (displayingAnswer)
+                    if (!keyPressed)
                     {
-                        values.Add(answer);
-                        displayingAnswer = false;
+                        if (displayingAnswer)
+                        {
+                            values.Add(answer);
+                            displayingAnswer = false;
+                        }
+                        else
+                        {
+                            if (hasDecimal)
+                            {
+                                double tempDecimal = ConvertToNumbers(tempValueString);
+                                values.Add((tempValue + tempDecimal * Math.Pow(10, -tempDecimal.ToString().Length)) * (isPercent ? 0.01f : 1));
+                                tempValue = 0;
+                            }
+                            else values.Add(ConvertToNumbers(tempValueString) * (isNegative ? -1 : 1) * (isPercent ? 0.01f : 1));
+                        }
                     }
                     else
                     {
-                        if (hasDecimal)
-                        {
-                            double tempDecimal = ConvertToNumbers(tempValueString);
-                            values.Add((tempValue + tempDecimal * Math.Pow(10, -tempDecimal.ToString().Length)) * (isPercent ? 0.01f : 1));
-                            tempValue = 0;
-                        }
-                        else values.Add(ConvertToNumbers(tempValueString) * (isNegative ? -1 : 1) * (isPercent ? 0.01f : 1));
+                        values.Add(int.Parse(unfinishedFormula));
                     }
                     tempValueString = "";
                     isNegative = false;
                     hasDecimal = false;
+                    keyPressed = false;
                     isPercent = false;
                     operators.Add('/');
                     break;
                 case "percent":
-                    if (!isPercent)
+                    if (!isPercent && unfinishedFormula.Length > 0)
                     {
                         unfinishedFormula += "%";
                         isPercent = true;
@@ -731,16 +764,24 @@ namespace Project
                 case "equals":
                     if (operators.Count() == 0) break;
                     formula += unfinishedFormula + " = ";
-                    if (hasDecimal)
+                    if (!keyPressed)
                     {
-                        double tempDecimal = ConvertToNumbers(tempValueString);
-                        values.Add((tempValue + tempDecimal * Math.Pow(10, -tempDecimal.ToString().Length)) * (isPercent ? 0.01f : 1));
-                        tempValue = 0;
+                        if (hasDecimal)
+                        {
+                            double tempDecimal = ConvertToNumbers(tempValueString);
+                            values.Add((tempValue + tempDecimal * Math.Pow(10, -tempDecimal.ToString().Length)) * (isPercent ? 0.01f : 1));
+                            tempValue = 0;
+                        }
+                        else values.Add(ConvertToNumbers(tempValueString) * (isNegative ? -1 : 1) * (isPercent ? 0.01f : 1));
                     }
-                    else values.Add(ConvertToNumbers(tempValueString) * (isNegative ? -1 : 1) * (isPercent ? 0.01f : 1));
+                    else
+                    {
+                        values.Add(int.Parse(unfinishedFormula));
+                    }
                     tempValueString = "";
                     unfinishedFormula = "";
                     isNegative = false;
+                    keyPressed = false;
                     hasDecimal = false;
                     isPercent = false;
                     // todo: output answer
@@ -756,6 +797,7 @@ namespace Project
                     formula = "";
                     unfinishedFormula = "";
                     isNegative = false;
+                    keyPressed = false;
                     hasDecimal = false;
                     displayingAnswer = false;
                     isPercent = false;
@@ -772,44 +814,44 @@ namespace Project
             switch (functionKey)
             {
                 case '0':
-                    PosX = 8;
-                    PosY = 335;
+                    unfinishedFormula += "0";
+                    keyPressed = true;
                     break;
                 case '1':
-                    PosX = 8;
-                    PosY = 270;
+                    unfinishedFormula += "1";
+                    keyPressed = true;
                     break;
                 case '2':
-                    PosX = 86;
-                    PosY = 270;
+                    unfinishedFormula += "2";
+                    keyPressed = true;
                     break;
                 case '3':
-                    PosX = 164;
-                    PosY = 270;
+                    unfinishedFormula += "3";
+                    keyPressed = true;
                     break;
                 case '4':
-                    PosX = 8;
-                    PosY = 205;
+                    unfinishedFormula += "4";
+                    keyPressed = true;
                     break;
                 case '5':
-                    PosX = 86;
-                    PosY = 205;
+                    unfinishedFormula += "5";
+                    keyPressed = true;
                     break;
                 case '6':
-                    PosX = 164;
-                    PosY = 205;
+                    unfinishedFormula += "6";
+                    keyPressed = true;
                     break;
                 case '7':
-                    PosX = 8;
-                    PosY = 140;
+                    unfinishedFormula += "7";
+                    keyPressed = true;
                     break;
                 case '8':
-                    PosX = 86;
-                    PosY = 140;
+                    unfinishedFormula += "8";
+                    keyPressed = true;
                     break;
                 case '9':
-                    PosX = 164;
-                    PosY = 140;
+                    unfinishedFormula += "9";
+                    keyPressed = true;
                     break;
                 case '.':
                     if (unfinishedFormula == "" || hasDecimal) break;
@@ -817,22 +859,32 @@ namespace Project
                     tempValue = ConvertToNumbers(tempValueString) * (isNegative ? -1 : 1);
                     tempValueString = "";
                     isNegative = false;
+                    keyPressed = true;
+                    keyPressed = true;
                     hasDecimal = true;
                     break;
                 case '=':
                     if (operators.Count() == 0) break;
                     formula += unfinishedFormula + " = ";
-                    if (hasDecimal)
+                    if (!keyPressed)
                     {
-                        double tempDecimal = ConvertToNumbers(tempValueString);
-                        values.Add((tempValue + tempDecimal * Math.Pow(10, -tempDecimal.ToString().Length)) * (isPercent ? 0.01f : 1));
-                        tempValue = 0;
+                        if (hasDecimal)
+                        {
+                            double tempDecimal = ConvertToNumbers(tempValueString);
+                            values.Add((tempValue + tempDecimal * Math.Pow(10, -tempDecimal.ToString().Length)) * (isPercent ? 0.01f : 1));
+                            tempValue = 0;
+                        }
+                        else values.Add(ConvertToNumbers(tempValueString) * (isNegative ? -1 : 1) * (isPercent ? 0.01f : 1));
                     }
-                    else values.Add(ConvertToNumbers(tempValueString) * (isNegative ? -1 : 1) * (isPercent ? 0.01f : 1));
+                    else
+                    {
+                        values.Add(int.Parse(unfinishedFormula));
+                    }
                     tempValueString = "";
                     unfinishedFormula = "";
                     isNegative = false;
                     hasDecimal = false;
+                    keyPressed = false;
                     isPercent = false;
                     // todo: output answer
                     answer = CalculateAnswer();
@@ -845,23 +897,31 @@ namespace Project
                     if (formula.EndsWith(" + ")) break;
                     formula += unfinishedFormula + " + ";
                     unfinishedFormula = "";
-                    if (displayingAnswer)
+                    if (!keyPressed)
                     {
-                        values.Add(answer);
-                        displayingAnswer = false;
+                        if (displayingAnswer)
+                        {
+                            values.Add(answer);
+                            displayingAnswer = false;
+                        }
+                        else
+                        {
+                            if (hasDecimal)
+                            {
+                                double tempDecimal = ConvertToNumbers(tempValueString);
+                                values.Add((tempValue + tempDecimal * Math.Pow(10, -tempDecimal.ToString().Length)) * (isPercent ? 0.01f : 1));
+                                tempValue = 0;
+                            }
+                            else values.Add(ConvertToNumbers(tempValueString) * (isNegative ? -1 : 1) * (isPercent ? 0.01f : 1));
+                        }
                     }
                     else
                     {
-                        if (hasDecimal)
-                        {
-                            double tempDecimal = ConvertToNumbers(tempValueString);
-                            values.Add((tempValue + tempDecimal * Math.Pow(10, -tempDecimal.ToString().Length)) * (isPercent ? 0.01f : 1));
-                            tempValue = 0;
-                        }
-                        else values.Add(ConvertToNumbers(tempValueString) * (isNegative ? -1 : 1) * (isPercent ? 0.01f : 1));
+                        values.Add(int.Parse(unfinishedFormula));
                     }
                     tempValueString = "";
                     isNegative = false;
+                    keyPressed = false;
                     hasDecimal = false;
                     isPercent = false;
                     operators.Add('+');
@@ -870,24 +930,32 @@ namespace Project
                     if (formula.EndsWith(" - ")) break;
                     formula += unfinishedFormula + " - ";
                     unfinishedFormula = "";
-                    if (displayingAnswer)
+                    if (!keyPressed)
                     {
-                        values.Add(answer);
-                        displayingAnswer = false;
+                        if (displayingAnswer)
+                        {
+                            values.Add(answer);
+                            displayingAnswer = false;
+                        }
+                        else
+                        {
+                            if (hasDecimal)
+                            {
+                                double tempDecimal = ConvertToNumbers(tempValueString);
+                                values.Add((tempValue + tempDecimal * Math.Pow(10, -tempDecimal.ToString().Length)) * (isPercent ? 0.01f : 1));
+                                tempValue = 0;
+                            }
+                            else values.Add(ConvertToNumbers(tempValueString) * (isNegative ? -1 : 1) * (isPercent ? 0.01f : 1));
+                        }
                     }
                     else
                     {
-                        if (hasDecimal)
-                        {
-                            double tempDecimal = ConvertToNumbers(tempValueString);
-                            values.Add((tempValue + tempDecimal * Math.Pow(10, -tempDecimal.ToString().Length)) * (isPercent ? 0.01f : 1));
-                            tempValue = 0;
-                        }
-                        else values.Add(ConvertToNumbers(tempValueString) * (isNegative ? -1 : 1) * (isPercent ? 0.01f : 1));
+                        values.Add(int.Parse(unfinishedFormula));
                     }
                     tempValueString = "";
                     isNegative = false;
                     hasDecimal = false;
+                    keyPressed = false;
                     isPercent = false;
                     operators.Add('-');
                     break;
@@ -895,57 +963,74 @@ namespace Project
                     if (formula.EndsWith(" x ")) break;
                     formula += unfinishedFormula + " x ";
                     unfinishedFormula = "";
-                    if (displayingAnswer)
+                    if (!keyPressed)
                     {
-                        values.Add(answer);
-                        displayingAnswer = false;
+                        if (displayingAnswer)
+                        {
+                            values.Add(answer);
+                            displayingAnswer = false;
+                        }
+                        else
+                        {
+                            if (hasDecimal)
+                            {
+                                double tempDecimal = ConvertToNumbers(tempValueString);
+                                values.Add((tempValue + tempDecimal * Math.Pow(10, -tempDecimal.ToString().Length)) * (isPercent ? 0.01f : 1));
+                                tempValue = 0;
+                            }
+                            else values.Add(ConvertToNumbers(tempValueString) * (isNegative ? -1 : 1) * (isPercent ? 0.01f : 1));
+                        }
                     }
                     else
                     {
-                        if (hasDecimal)
-                        {
-                            double tempDecimal = ConvertToNumbers(tempValueString);
-                            values.Add((tempValue + tempDecimal * Math.Pow(10, -tempDecimal.ToString().Length)) * (isPercent ? 0.01f : 1));
-                            tempValue = 0;
-                        }
-                        else values.Add(ConvertToNumbers(tempValueString) * (isNegative ? -1 : 1) * (isPercent ? 0.01f : 1));
+                        values.Add(int.Parse(unfinishedFormula));
                     }
                     tempValueString = "";
                     isNegative = false;
                     hasDecimal = false;
                     isPercent = false;
+                    keyPressed = false;
                     operators.Add('*');
                     break;
                 case '/':
                     if (formula.EndsWith(" / ")) break;
                     formula += unfinishedFormula + " / ";
                     unfinishedFormula = "";
-                    if (displayingAnswer)
+                    if (!keyPressed)
                     {
-                        values.Add(answer);
-                        displayingAnswer = false;
+                        if (displayingAnswer)
+                        {
+                            values.Add(answer);
+                            displayingAnswer = false;
+                        }
+                        else
+                        {
+                            if (hasDecimal)
+                            {
+                                double tempDecimal = ConvertToNumbers(tempValueString);
+                                values.Add((tempValue + tempDecimal * Math.Pow(10, -tempDecimal.ToString().Length)) * (isPercent ? 0.01f : 1));
+                                tempValue = 0;
+                            }
+                            else values.Add(ConvertToNumbers(tempValueString) * (isNegative ? -1 : 1) * (isPercent ? 0.01f : 1));
+                        }
                     }
                     else
                     {
-                        if (hasDecimal)
-                        {
-                            double tempDecimal = ConvertToNumbers(tempValueString);
-                            values.Add((tempValue + tempDecimal * Math.Pow(10, -tempDecimal.ToString().Length)) * (isPercent ? 0.01f : 1));
-                            tempValue = 0;
-                        }
-                        else values.Add(ConvertToNumbers(tempValueString) * (isNegative ? -1 : 1) * (isPercent ? 0.01f : 1));
+                        values.Add(int.Parse(unfinishedFormula));
                     }
                     tempValueString = "";
                     isNegative = false;
                     hasDecimal = false;
                     isPercent = false;
+                    keyPressed = false;
                     operators.Add('/');
                     break;
                 case '%':
-                    if (!isPercent)
+                    if (!isPercent && unfinishedFormula.Length > 0)
                     {
                         unfinishedFormula += "%";
                         isPercent = true;
+                        keyPressed = true;
                     }
                     break;
                 case 'C':
@@ -956,6 +1041,7 @@ namespace Project
                     isNegative = false;
                     hasDecimal = false;
                     displayingAnswer = false;
+                    keyPressed = false;
                     isPercent = false;
                     values.Clear();
                     operators.Clear();

@@ -82,7 +82,7 @@ namespace Project
 
             Switcher.Update(false, new Point(clampedX, clampedY), handState);
 
-            //Trace.WriteLine("Update Hovering: " + MainWindow.hovering);
+            Trace.WriteLine("OnFocusApp != Menu: " + (OnFocusApp != Menu));
             if (OnFocusApp != Menu)
             {
                 //Trace.WriteLine("Update CheckPoint B");
@@ -139,34 +139,36 @@ namespace Project
 
         void Late_RemoveApp()
         {
-            for (int i = List_ToBeRemoved.Count - 1; i >= 0; i--)
+            if (List_ToBeRemoved.Count > 0)
             {
-                int index = RunningApps.IndexOf(List_ToBeRemoved[i]);
-                RunningApps.RemoveAt(index);
-                Switcher.RunningAppIcons.Remove(Switcher.RunningAppIcons.Find(x => x.CorrespondingApp == List_ToBeRemoved[i]));
-                List_ToBeRemoved.RemoveAt(i);
-
-                MainWindow.hovering = null;//To remove topright close from hovering
-            }
-
-            if (RunningApps.Count > 0)
-                OnFocusApp = RunningApps[0];
-            else
-                OnFocusApp = null;
-
-            if (RunningApps.Count > 5)
-            {
-                Switcher.CalculateStartIndex();
-                for (int i = Switcher.Start; i < Switcher.Start + 5; i++)
+                for (int i = List_ToBeRemoved.Count - 1; i >= 0; i--)
                 {
-                    Switcher.RunningAppIcons[i].UpdateRect();
+                    int index = RunningApps.IndexOf(List_ToBeRemoved[i]);
+                    RunningApps.RemoveAt(index);
+                    Switcher.RunningAppIcons.Remove(Switcher.RunningAppIcons.Find(x => x.CorrespondingApp == List_ToBeRemoved[i]));
+                    List_ToBeRemoved.RemoveAt(i);
+
+                    MainWindow.hovering = null;//To remove topright close from hovering
                 }
-            }
-            else
-            { 
-                foreach (MiddleRightElement element in Switcher.RunningAppIcons)
+
+                if (RunningApps.Count > 0)
+                    OnFocusApp = RunningApps[0];
+                else
+                    OnFocusApp = null;
+                if (RunningApps.Count > 5)
                 {
-                    element.UpdateRect();
+                    Switcher.CalculateStartIndex();
+                    for (int i = Switcher.Start; i < Switcher.Start + 5; i++)
+                    {
+                        Switcher.RunningAppIcons[i].UpdateRect();
+                    }
+                }
+                else
+                { 
+                    foreach (MiddleRightElement element in Switcher.RunningAppIcons)
+                    {
+                        element.UpdateRect();
+                    }
                 }
             }
         }

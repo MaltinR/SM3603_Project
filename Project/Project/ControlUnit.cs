@@ -1276,7 +1276,7 @@ namespace Project
                     break;
                 default:
                     Width = 320;
-                    Height = 400;
+                    Height = 225;
                     PosX = 0;
                     PosY = 0;
                     color = Brushes.Black;
@@ -1308,4 +1308,383 @@ namespace Project
             return false;
         }
     }
+
+    public class Menu_TextEditor : MenuControlUnit
+    {
+        public Menu_TextEditor(Menu menu)
+        {
+            HoveringTime = 60;
+
+            Parent = menu;
+            Image_Normal = new BitmapImage(new Uri("Images/Icon_TextEditor_Normal.png", UriKind.Relative));
+            Image_Selecting = new BitmapImage(new Uri("Images/Icon_TextEditor_Selecting.png", UriKind.Relative));
+
+            Width = 100;
+            Height = 100;
+
+            CalMargin();
+
+            PosX = (int)(Margin + 0 * (Width + Gap));
+            PosY = 175;
+            UpdateRect();
+        }
+
+        protected override bool HoverTimesUp(int mousePosX, int mousePosY)
+        {
+            MainWindow.Manager.AddApp(new App_Calculator());
+            return false;
+        }
+    }
+    
+    public class TextEditor_Functions : LocalControlUnit
+    {
+        public string functionKey;
+        int fontSize;
+        TextAlignment align;
+        int extraTextPosX;
+        public SolidColorBrush color;
+        int tempPosY;
+        bool isSaveButton;
+
+        public TextEditor_Functions(App_TextEditor textEditor, string functionKey)
+        {
+            HoveringTime = 30;
+
+            Parent = textEditor;
+            this.functionKey = functionKey;
+            color = Brushes.Gray;
+
+            Height = 50;
+            Width = 55;
+            fontSize = 16;
+            align = TextAlignment.Left;
+            extraTextPosX = 0;
+            isSaveButton = false;
+
+            switch (functionKey)
+            {
+                case "Insert":
+                    PosX = 5;
+                    PosY = 5;
+                    fontSize = 12;
+                    break;
+                case "1":
+                    PosX = 65;
+                    PosY = 5;
+                    break;
+                case "2":
+                    PosX = 125;
+                    PosY = 5;
+                    break;
+                case "3":
+                    PosX = 185;
+                    PosY = 5;
+                    break;
+                case "4":
+                    PosX = 245;
+                    PosY = 5;
+                    break;
+                case "5":
+                    PosX = 305;
+                    PosY = 5;
+                    break;
+                case "6":
+                    PosX = 365;
+                    PosY = 5;
+                    break;
+                case "7":
+                    PosX = 425;
+                    PosY = 5;
+                    break;
+                case "8":
+                    PosX = 485;
+                    PosY = 5;
+                    break;
+                case "9":
+                    PosX = 545;
+                    PosY = 5;
+                    break;
+                case "0":
+                    PosX = 605;
+                    PosY = 5;
+                    break;
+                case "-":
+                    PosX = 665;
+                    PosY = 5;
+                    break;
+                case "=":
+                    PosX = 725;
+                    PosY = 5;
+                    break;
+                case "Backspace":
+                    PosX = 785;
+                    PosY = 5;
+                    Width = 75;
+                    fontSize = 12;
+                    extraTextPosX = 1;
+                    align = TextAlignment.Right;
+                    break;
+
+                case "Delete":
+                    PosX = 5;
+                    PosY = 60;
+                    Width = 70;
+                    fontSize = 12;
+                    break;
+                case "q":
+                    PosX = 80;
+                    PosY = 60;
+                    break;
+                case "w":
+                    PosX = 140;
+                    PosY = 60;
+                    break;
+                case "e":
+                    PosX = 200;
+                    PosY = 60;
+                    break;
+                case "r":
+                    PosX = 260;
+                    PosY = 60;
+                    break;
+                case "t":
+                    PosX = 320;
+                    PosY = 60;
+                    break;
+                case "y":
+                    PosX = 380;
+                    PosY = 60;
+                    break;
+                case "u":
+                    PosX = 440;
+                    PosY = 60;
+                    break;
+                case "i":
+                    PosX = 500;
+                    PosY = 60;
+                    break;
+                case "o":
+                    PosX = 560;
+                    PosY = 60;
+                    break;
+                case "p":
+                    PosX = 620;
+                    PosY = 60;
+                    break;
+
+                case "[":
+                    PosX = 680;
+                    PosY = 60;
+                    break;
+                case "]":
+                    PosX = 740;
+                    PosY = 60;
+                    break;
+                case "\\":
+                    PosX = 800;
+                    PosY = 60;
+                    Width = 60;
+                    break;
+
+                case "Capslock":
+                    PosX = 5;
+                    PosY = 115;
+                    Width = 90;
+                    fontSize = 12;
+                    this.functionKey = "CapsLk";
+                    break;
+                case "a":
+                    PosX = 100;
+                    PosY = 115;
+                    break;
+                case "s":
+                    PosX = 160;
+                    PosY = 115;
+                    break;
+                case "d":
+                    PosX = 220;
+                    PosY = 115;
+                    break;
+                case "f":
+                    PosX = 280;
+                    PosY = 115;
+                    break;
+                case "g":
+                    PosX = 340;
+                    PosY = 115;
+                    break;
+                case "h":
+                    PosX = 400;
+                    PosY = 115;
+                    break;
+                case "j":
+                    PosX = 460;
+                    PosY = 115;
+                    break;
+                case "k":
+                    PosX = 520;
+                    PosY = 115;
+                    break;
+                case "l":
+                    PosX = 580;
+                    PosY = 115;
+                    break;
+                case ";":
+                    PosX = 640;
+                    PosY = 115;
+                    break;
+                case "'":
+                    PosX = 700;
+                    PosY = 115;
+                    break;
+                case "Enter":
+                    PosX = 760;
+                    PosY = 115;
+                    Width = 100;
+                    fontSize = 12;
+                    align = TextAlignment.Right;
+                    extraTextPosX = 55;
+                    break;
+
+                case "Left Shift":
+                    PosX = 5;
+                    PosY = 170;
+                    Width = 115;
+                    fontSize = 12;
+                    this.functionKey = "Shift";
+                    break;
+                case "z":
+                    PosX = 125;
+                    PosY = 170;
+                    break;
+                case "x":
+                    PosX = 185;
+                    PosY = 170;
+                    break;
+                case "c":
+                    PosX = 245;
+                    PosY = 170;
+                    break;
+                case "v":
+                    PosX = 305;
+                    PosY = 170;
+                    break;
+                case "b":
+                    PosX = 365;
+                    PosY = 170;
+                    break;
+                case "n":
+                    PosX = 425;
+                    PosY = 170;
+                    break;
+                case "m":
+                    PosX = 485;
+                    PosY = 170;
+                    break;
+                case ",":
+                    PosX = 545;
+                    PosY = 170;
+                    break;
+                case ".":
+                    PosX = 605;
+                    PosY = 170;
+                    break;
+                case "/":
+                    PosX = 665;
+                    PosY = 170;
+                    break;
+                case "Right Shift":
+                    PosX = 725;
+                    PosY = 170;
+                    Width = 135;
+                    fontSize = 12;
+                    this.functionKey = "Shift";
+                    align = TextAlignment.Right;
+                    extraTextPosX = 93;
+                    break;
+
+                case "Up":
+                    PosX = 940;
+                    PosY = 170;
+                    fontSize = 12;
+                    extraTextPosX = 22;
+                    align = TextAlignment.Center;
+                    break;
+                              
+                case "Save":
+                    isSaveButton = true;
+                    PosX = 900;
+                    PosY = 10;
+                    Width = 70;
+                    Height = 50;
+                    extraTextPosX = 30;
+                    align = TextAlignment.Center;
+                    break; 
+
+                case "Space":
+                    PosX = 245;
+                    PosY = 225;
+                    Width = 275;
+                    this.functionKey = " ";
+                    break;
+
+                case "Left":
+                    PosX = 880;
+                    PosY = 225;
+                    fontSize = 12;
+                    extraTextPosX = 22;
+                    align = TextAlignment.Center;
+                    break;
+                case "Down":
+                    PosX = 940;
+                    PosY = 225;
+                    fontSize = 12;
+                    extraTextPosX = 22;
+                    align = TextAlignment.Center;
+                    break;
+                case "Right":
+                    PosX = 1000;
+                    PosY = 225;
+                    fontSize = 12;
+                    extraTextPosX = 22;
+                    align = TextAlignment.Center;
+                    break;   
+                    
+                default:
+                    break;
+            }
+            tempPosY = PosY;
+
+            UpdateRect();
+        }
+
+        public void Print(int textEditorHeight, int textEditorWidth)
+        {
+            //base.Print();
+
+            if (isSaveButton)
+                PosX = textEditorWidth - Width - 5;
+            else PosY = tempPosY + textEditorHeight - 280;
+            UpdateRect();
+            MainWindow.RenderManager.DrawingContext.DrawRectangle(color, null, Rect);
+            FormattedText pathFormattedText = new FormattedText(functionKey + "",
+                CultureInfo.GetCultureInfo("en-us"),
+                align == TextAlignment.Right ? FlowDirection.RightToLeft : FlowDirection.LeftToRight,
+                new Typeface("Verdana"),
+                fontSize,
+                Brushes.White, 30);
+            pathFormattedText.Trimming = TextTrimming.CharacterEllipsis;
+            pathFormattedText.TextAlignment = align;
+            MainWindow.RenderManager.DrawingContext.DrawText(pathFormattedText, new Point(Rect.X + 5 + extraTextPosX, Rect.Y + 20));
+        }
+
+        protected override bool HoverTimesUp(int mousePosX, int mousePosY)
+        {
+            //MainWindow.Manager.AddApp(new App_FileExplorer());
+            // hovering to do 
+            (Parent as App_TextEditor).TextEditor_Buttons_Functions(functionKey);
+            return false;
+        }
+    }
+
 }

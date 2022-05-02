@@ -174,7 +174,7 @@ namespace Project
                     result -= values[i + 1];
                 }
             }
-            return result;
+            return Math.Round(result);
         }
 
 
@@ -184,6 +184,7 @@ namespace Project
 
         public string tempValueString = "";
         public double tempValue = 0;
+        public int totalDigits;
         public List<double> values = new List<double>();
         public List<char> operators = new List<char>();
         public double answer = 0;
@@ -195,6 +196,8 @@ namespace Project
 
         public bool CheckAvailableInput(int digits)
         {
+            Debug.WriteLine(tempValueString);
+
             if (tempValueString.EndsWith("percent ")) return false;
 
             bool isAvailable = !(tempValueString.EndsWith("zero ") || tempValueString.EndsWith("one ") || tempValueString.EndsWith("two ") || tempValueString.EndsWith("three ")
@@ -258,7 +261,7 @@ namespace Project
                         displayingAnswer = false;
                     }
                     tempValueString += "one ";
-                    unfinishedFormula = ConvertToNumbers(tempValueString).ToString();
+                    unfinishedFormula += ConvertToNumbers(tempValueString).ToString();
                     break;
                 case "two":
                     if (!CheckAvailableInput(1)) break;
@@ -268,7 +271,7 @@ namespace Project
                         displayingAnswer = false;
                     }
                     tempValueString += "two ";
-                    unfinishedFormula = ConvertToNumbers(tempValueString).ToString();
+                    unfinishedFormula += ConvertToNumbers(tempValueString).ToString();
                     break;
                 case "three":
                     if (!CheckAvailableInput(1)) break;
@@ -278,7 +281,7 @@ namespace Project
                         displayingAnswer = false;
                     }
                     tempValueString += "three ";
-                    unfinishedFormula = ConvertToNumbers(tempValueString).ToString();
+                    unfinishedFormula += ConvertToNumbers(tempValueString).ToString();
                     break;
                 case "four":
                     if (!CheckAvailableInput(1)) break;
@@ -288,7 +291,7 @@ namespace Project
                         displayingAnswer = false;
                     }
                     tempValueString += "four ";
-                    unfinishedFormula = ConvertToNumbers(tempValueString).ToString();
+                    unfinishedFormula += ConvertToNumbers(tempValueString).ToString();
                     break;
                 case "five":
                     if (!CheckAvailableInput(1)) break;
@@ -298,7 +301,7 @@ namespace Project
                         displayingAnswer = false;
                     }
                     tempValueString += "five ";
-                    unfinishedFormula = ConvertToNumbers(tempValueString).ToString();
+                    unfinishedFormula += ConvertToNumbers(tempValueString).ToString();
                     break;
                 case "six":
                     if (!CheckAvailableInput(1)) break;
@@ -308,7 +311,7 @@ namespace Project
                         displayingAnswer = false;
                     }
                     tempValueString += "six ";
-                    unfinishedFormula = ConvertToNumbers(tempValueString).ToString();
+                    unfinishedFormula += ConvertToNumbers(tempValueString).ToString();
                     break;
                 case "seven":
                     if (!CheckAvailableInput(1)) break;
@@ -318,7 +321,7 @@ namespace Project
                         displayingAnswer = false;
                     }
                     tempValueString += "seven ";
-                    unfinishedFormula = ConvertToNumbers(tempValueString).ToString();
+                    unfinishedFormula += ConvertToNumbers(tempValueString).ToString();
                     break;
                 case "eight":
                     if (!CheckAvailableInput(1)) break;
@@ -328,267 +331,267 @@ namespace Project
                         displayingAnswer = false;
                     }
                     tempValueString += "eight ";
-                    unfinishedFormula = ConvertToNumbers(tempValueString).ToString();
+                    unfinishedFormula += ConvertToNumbers(tempValueString).ToString();
                     break;
                 case "nine":
-                    if (!keyPressed && !CheckAvailableInput(1)) break;
+                    if (!CheckAvailableInput(1)) break;
                     if (displayingAnswer)
                     {
                         formula = "";
                         displayingAnswer = false;
                     }
                     tempValueString += "nine ";
-                    unfinishedFormula = ConvertToNumbers(tempValueString).ToString();
+                    unfinishedFormula += ConvertToNumbers(tempValueString).ToString();
                     break;
                 case "ten":
-                    if (!keyPressed && !CheckAvailableInput(2)) break;
+                    if (keyPressed || !CheckAvailableInput(2)) break;
                     if (displayingAnswer)
                     {
                         formula = "";
                         displayingAnswer = false;
                     }
                     tempValueString += "ten ";
-                    unfinishedFormula = ConvertToNumbers(tempValueString).ToString();
+                    unfinishedFormula += ConvertToNumbers(tempValueString).ToString();
                     break;
                 case "eleven":
-                    if (!keyPressed && !CheckAvailableInput(2)) break;
+                    if (keyPressed || !CheckAvailableInput(2)) break;
                     if (displayingAnswer)
                     {
                         formula = "";
                         displayingAnswer = false;
                     }
                     tempValueString += "eleven ";
-                    unfinishedFormula = ConvertToNumbers(tempValueString).ToString();
+                    unfinishedFormula += ConvertToNumbers(tempValueString).ToString();
                     break;
                 case "twelve":
-                    if (!keyPressed && !CheckAvailableInput(2)) break;
+                    if (keyPressed || !CheckAvailableInput(2)) break;
                     if (displayingAnswer)
                     {
                         formula = "";
                         displayingAnswer = false;
                     }
                     tempValueString += "twelve ";
-                    unfinishedFormula = ConvertToNumbers(tempValueString).ToString();
+                    unfinishedFormula += ConvertToNumbers(tempValueString).ToString();
                     break;
                 case "thirteen":
-                    if (!keyPressed && !CheckAvailableInput(2)) break;
+                    if (keyPressed || !CheckAvailableInput(2)) break;
                     if (displayingAnswer)
                     {
                         formula = "";
                         displayingAnswer = false;
                     }
                     tempValueString += "thirteen ";
-                    unfinishedFormula = ConvertToNumbers(tempValueString).ToString();
+                    unfinishedFormula += ConvertToNumbers(tempValueString).ToString();
                     break;
                 case "fourteen":
-                    if (!keyPressed && !CheckAvailableInput(2)) break;
+                    if (keyPressed || !CheckAvailableInput(2)) break;
                     if (displayingAnswer)
                     {
                         formula = "";
                         displayingAnswer = false;
                     }
                     tempValueString += "fourteen ";
-                    unfinishedFormula = ConvertToNumbers(tempValueString).ToString();
+                    unfinishedFormula += ConvertToNumbers(tempValueString).ToString();
                     break;
                 case "fifteen":
-                    if (!keyPressed && !CheckAvailableInput(2)) break;
+                    if (keyPressed || !CheckAvailableInput(2)) break;
                     if (displayingAnswer)
                     {
                         formula = "";
                         displayingAnswer = false;
                     }
                     tempValueString += "fifteen ";
-                    unfinishedFormula = ConvertToNumbers(tempValueString).ToString();
+                    unfinishedFormula += ConvertToNumbers(tempValueString).ToString();
                     break;
                 case "sixteen":
-                    if (!keyPressed && !CheckAvailableInput(2)) break;
+                    if (keyPressed || !CheckAvailableInput(2)) break;
                     if (displayingAnswer)
                     {
                         formula = "";
                         displayingAnswer = false;
                     }
                     tempValueString += "sixteen ";
-                    unfinishedFormula = ConvertToNumbers(tempValueString).ToString();
+                    unfinishedFormula += ConvertToNumbers(tempValueString).ToString();
                     break;
                 case "seventeen":
-                    if (!keyPressed && !CheckAvailableInput(2)) break;
+                    if (keyPressed || !CheckAvailableInput(2)) break;
                     if (displayingAnswer)
                     {
                         formula = "";
                         displayingAnswer = false;
                     }
                     tempValueString += "seventeen ";
-                    unfinishedFormula = ConvertToNumbers(tempValueString).ToString();
+                    unfinishedFormula += ConvertToNumbers(tempValueString).ToString();
                     break;
                 case "eighteen":
-                    if (!keyPressed && !CheckAvailableInput(2)) break;
+                    if (keyPressed || !CheckAvailableInput(2)) break;
                     if (displayingAnswer)
                     {
                         formula = "";
                         displayingAnswer = false;
                     }
                     tempValueString += "eighteen ";
-                    unfinishedFormula = ConvertToNumbers(tempValueString).ToString();
+                    unfinishedFormula += ConvertToNumbers(tempValueString).ToString();
                     break;
                 case "nineteen":
-                    if (!keyPressed && !CheckAvailableInput(2)) break;
+                    if (keyPressed || !CheckAvailableInput(2)) break;
                     if (displayingAnswer)
                     {
                         formula = "";
                         displayingAnswer = false;
                     }
                     tempValueString += "nineteen ";
-                    unfinishedFormula = ConvertToNumbers(tempValueString).ToString();
+                    unfinishedFormula += ConvertToNumbers(tempValueString).ToString();
                     break;
                 case "twenty":
-                    if (!keyPressed && !CheckAvailableInput(2)) break;
+                    if (keyPressed || !CheckAvailableInput(2)) break;
                     if (displayingAnswer)
                     {
                         formula = "";
                         displayingAnswer = false;
                     }
                     tempValueString += "twenty ";
-                    unfinishedFormula = ConvertToNumbers(tempValueString).ToString();
+                    unfinishedFormula += ConvertToNumbers(tempValueString).ToString();
                     break;
                 case "thirty":
-                    if (!keyPressed && !CheckAvailableInput(2)) break;
+                    if (keyPressed || !CheckAvailableInput(2)) break;
                     if (displayingAnswer)
                     {
                         formula = "";
                         displayingAnswer = false;
                     }
                     tempValueString += "thirty ";
-                    unfinishedFormula = ConvertToNumbers(tempValueString).ToString();
+                    unfinishedFormula += ConvertToNumbers(tempValueString).ToString();
                     break;
-                case "fourty":
-                    if (!keyPressed && !CheckAvailableInput(2)) break;
+                case "forty":
+                    if (keyPressed || !CheckAvailableInput(2)) break;
                     if (displayingAnswer)
                     {
                         formula = "";
                         displayingAnswer = false;
                     }
-                    tempValueString += "fourty ";
-                    unfinishedFormula = ConvertToNumbers(tempValueString).ToString();
+                    tempValueString += "forty ";
+                    unfinishedFormula += ConvertToNumbers(tempValueString).ToString();
                     break;
                 case "fifty":
-                    if (!keyPressed && !CheckAvailableInput(2)) break;
+                    if (keyPressed || !CheckAvailableInput(2)) break;
                     if (displayingAnswer)
                     {
                         formula = "";
                         displayingAnswer = false;
                     }
                     tempValueString += "fifty ";
-                    unfinishedFormula = ConvertToNumbers(tempValueString).ToString();
+                    unfinishedFormula += ConvertToNumbers(tempValueString).ToString();
                     break;
                 case "sixty":
-                    if (!keyPressed && !CheckAvailableInput(2)) break;
+                    if (keyPressed || !CheckAvailableInput(2)) break;
                     if (displayingAnswer)
                     {
                         formula = "";
                         displayingAnswer = false;
                     }
                     tempValueString += "sixty ";
-                    unfinishedFormula = ConvertToNumbers(tempValueString).ToString();
+                    unfinishedFormula += ConvertToNumbers(tempValueString).ToString();
                     break;
                 case "seventy":
-                    if (!keyPressed && !CheckAvailableInput(2)) break;
+                    if (keyPressed || !CheckAvailableInput(2)) break;
                     if (displayingAnswer)
                     {
                         formula = "";
                         displayingAnswer = false;
                     }
                     tempValueString += "seventy ";
-                    unfinishedFormula = ConvertToNumbers(tempValueString).ToString();
+                    unfinishedFormula += ConvertToNumbers(tempValueString).ToString();
                     break;
                 case "eighty":
-                    if (!keyPressed && !CheckAvailableInput(2)) break;
+                    if (keyPressed || !CheckAvailableInput(2)) break;
                     if (displayingAnswer)
                     {
                         formula = "";
                         displayingAnswer = false;
                     }
                     tempValueString += "eighty ";
-                    unfinishedFormula = ConvertToNumbers(tempValueString).ToString();
+                    unfinishedFormula += ConvertToNumbers(tempValueString).ToString();
                     break;
                 case "ninety":
-                    if (!keyPressed && !CheckAvailableInput(2)) break;
+                    if (keyPressed || !CheckAvailableInput(2)) break;
                     if (displayingAnswer)
                     {
                         formula = "";
                         displayingAnswer = false;
                     }
                     tempValueString += "ninety ";
-                    unfinishedFormula = ConvertToNumbers(tempValueString).ToString();
+                    unfinishedFormula += ConvertToNumbers(tempValueString).ToString();
                     break;
                 case "hundred":
-                    if (!keyPressed && !CheckAvailableInput(3)) break;
+                    if (keyPressed || !CheckAvailableInput(3)) break;
                     if (displayingAnswer)
                     {
                         formula = "";
                         displayingAnswer = false;
                     }
                     tempValueString += "hundred ";
-                    unfinishedFormula = ConvertToNumbers(tempValueString).ToString();
+                    unfinishedFormula += ConvertToNumbers(tempValueString).ToString();
                     break;
                 case "thousand":
-                    if (!keyPressed && !CheckAvailableInput(4)) break;
+                    if (keyPressed || !CheckAvailableInput(4)) break;
                     if (displayingAnswer)
                     {
                         formula = "";
                         displayingAnswer = false;
                     }
                     tempValueString += "thousand ";
-                    unfinishedFormula = ConvertToNumbers(tempValueString).ToString();
+                    unfinishedFormula += ConvertToNumbers(tempValueString).ToString();
                     break;
                 case "million":
-                    if (!keyPressed && !CheckAvailableInput(7)) break;
+                    if (keyPressed || !CheckAvailableInput(7)) break;
                     if (displayingAnswer)
                     {
                         formula = "";
                         displayingAnswer = false;
                     }
                     tempValueString += "million ";
-                    unfinishedFormula = ConvertToNumbers(tempValueString).ToString();
+                    unfinishedFormula += ConvertToNumbers(tempValueString).ToString();
                     break;
                 case "billion":
-                    if (!keyPressed && !CheckAvailableInput(10)) break;
+                    if (keyPressed || !CheckAvailableInput(10)) break;
                     if (displayingAnswer)
                     {
                         formula = "";
                         displayingAnswer = false;
                     }
                     tempValueString += "billion ";
-                    unfinishedFormula = ConvertToNumbers(tempValueString).ToString();
+                    unfinishedFormula += ConvertToNumbers(tempValueString).ToString();
                     break;
                 case "trillion":
-                    if (!keyPressed && !CheckAvailableInput(13)) break;
+                    if (keyPressed || !CheckAvailableInput(13)) break;
                     if (displayingAnswer)
                     {
                         formula = "";
                         displayingAnswer = false;
                     }
                     tempValueString += "trillion ";
-                    unfinishedFormula = ConvertToNumbers(tempValueString).ToString();
+                    unfinishedFormula += ConvertToNumbers(tempValueString).ToString();
                     break;
                 case "quadrillion":
-                    if (!keyPressed && !CheckAvailableInput(16)) break;
+                    if (keyPressed || !CheckAvailableInput(16)) break;
                     if (displayingAnswer)
                     {
                         formula = "";
                         displayingAnswer = false;
                     }
                     tempValueString += "quadrillion ";
-                    unfinishedFormula = ConvertToNumbers(tempValueString).ToString();
+                    unfinishedFormula += ConvertToNumbers(tempValueString).ToString();
                     break;
                 case "quintillion":
-                    if (!keyPressed && !CheckAvailableInput(19)) break;
+                    if (keyPressed || !CheckAvailableInput(19)) break;
                     if (displayingAnswer)
                     {
                         formula = "";
                         displayingAnswer = false;
                     }
                     tempValueString += "quintillion ";
-                    unfinishedFormula = ConvertToNumbers(tempValueString).ToString();
+                    unfinishedFormula += ConvertToNumbers(tempValueString).ToString();
                     break;
                 
                 // operator
@@ -616,7 +619,8 @@ namespace Project
                     }
                     else
                     {
-                        values.Add(int.Parse(unfinishedFormula));
+                        if (isPercent) values.Add(double.Parse(unfinishedFormula.Remove(unfinishedFormula.Length - 1, 1)) * 0.01d);
+                        else values.Add(double.Parse(unfinishedFormula));
                     }
                     tempValueString = "";
                     unfinishedFormula = "";
@@ -650,7 +654,8 @@ namespace Project
                     }
                     else
                     {
-                        values.Add(int.Parse(unfinishedFormula));
+                        if (isPercent) values.Add(double.Parse(unfinishedFormula.Remove(unfinishedFormula.Length - 1, 1)) * 0.01d);
+                        else values.Add(double.Parse(unfinishedFormula));
                     }
                     unfinishedFormula = "";
                     tempValueString = "";
@@ -685,7 +690,8 @@ namespace Project
                     }
                     else
                     {
-                        values.Add(int.Parse(unfinishedFormula));
+                        if (isPercent) values.Add(double.Parse(unfinishedFormula.Remove(unfinishedFormula.Length - 1, 1)) * 0.01d);
+                        else values.Add(double.Parse(unfinishedFormula));
                     }
                     unfinishedFormula = "";
                     tempValueString = "";
@@ -720,7 +726,8 @@ namespace Project
                     }
                     else
                     {
-                        values.Add(int.Parse(unfinishedFormula));
+                        if (isPercent) values.Add(double.Parse(unfinishedFormula.Remove(unfinishedFormula.Length - 1, 1)) * 0.01d);
+                        else values.Add(double.Parse(unfinishedFormula));
                     }
                     tempValueString = "";
                     unfinishedFormula = "";
@@ -780,7 +787,8 @@ namespace Project
                     }
                     else
                     {
-                        values.Add(int.Parse(unfinishedFormula));
+                        if (isPercent) values.Add(double.Parse(unfinishedFormula.Remove(unfinishedFormula.Length - 1, 1)) * 0.01d);
+                        else values.Add(double.Parse(unfinishedFormula));
                     }
                     tempValueString = "";
                     unfinishedFormula = "";
@@ -813,6 +821,7 @@ namespace Project
                     break;
             }
         }
+
         public void Calculator_Buttons_Functions(char functionKey)
         {
             switch (functionKey)
@@ -864,7 +873,6 @@ namespace Project
                     tempValueString = "";
                     isNegative = false;
                     keyPressed = true;
-                    keyPressed = true;
                     hasDecimal = true;
                     break;
                 case '=':
@@ -882,7 +890,8 @@ namespace Project
                     }
                     else
                     {
-                        values.Add(int.Parse(unfinishedFormula));
+                        if (isPercent) values.Add(double.Parse(unfinishedFormula.Remove(unfinishedFormula.Length - 1, 1)) * 0.01d);
+                        else values.Add(double.Parse(unfinishedFormula));
                     }
                     tempValueString = "";
                     unfinishedFormula = "";
@@ -921,7 +930,8 @@ namespace Project
                     }
                     else
                     {
-                        values.Add(int.Parse(unfinishedFormula));
+                        if (isPercent) values.Add(double.Parse(unfinishedFormula.Remove(unfinishedFormula.Length - 1, 1)) * 0.01d);
+                        else values.Add(double.Parse(unfinishedFormula));
                     }
                     unfinishedFormula = "";
                     tempValueString = "";
@@ -955,7 +965,8 @@ namespace Project
                     }
                     else
                     {
-                        values.Add(int.Parse(unfinishedFormula));
+                        if (isPercent) values.Add(double.Parse(unfinishedFormula.Remove(unfinishedFormula.Length - 1, 1)) * 0.01d);
+                        else values.Add(double.Parse(unfinishedFormula));
                     }
                     unfinishedFormula = "";
                     tempValueString = "";
@@ -989,7 +1000,8 @@ namespace Project
                     }
                     else
                     {
-                        values.Add(int.Parse(unfinishedFormula));
+                        if (isPercent) values.Add(double.Parse(unfinishedFormula.Remove(unfinishedFormula.Length - 1, 1)) * 0.01d);
+                        else values.Add(double.Parse(unfinishedFormula));
                     }
                     unfinishedFormula = "";
                     tempValueString = "";
@@ -1023,7 +1035,8 @@ namespace Project
                     }
                     else
                     {
-                        values.Add(int.Parse(unfinishedFormula));
+                        if (isPercent) values.Add(double.Parse(unfinishedFormula.Remove(unfinishedFormula.Length - 1, 1)) * 0.01d);
+                        else values.Add(double.Parse(unfinishedFormula));
                     }
                     unfinishedFormula = "";
                     tempValueString = "";

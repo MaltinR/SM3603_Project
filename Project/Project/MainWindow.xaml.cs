@@ -139,7 +139,8 @@ namespace Project
             //Manager.AddApp(new App_VideoPlayer("E:/School/CityU/221/SM3603/SM3603_Project/SampleVideos/277957136_1030137967586408_6026758252614106551_n.mp4"));
             //Manager.AddApp(new App_VideoPlayer("E:/School/CityU/221/SM3603/SM3603_Project/SampleVideos/277957136_1030137967586408_6026758252614106551_n.mp4"));
             //Manager.AddApp(new App_FileExplorer());
-            Manager.AddApp(new App_Calculator());
+            //Manager.AddApp(new App_Calculator());
+            Manager.AddApp(new App_TextEditor("D:/Users/User/Desktop/test.txt"));
             //Manager.AddApp(new App_ImageEditor("E:/School/CityU/221/SM3603/SM3603_Project/Test.png"));
         }
 

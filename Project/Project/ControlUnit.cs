@@ -1152,6 +1152,7 @@ namespace Project
         protected override bool HoverTimesUp(int mousePosX, int mousePosY)
         {
             MainWindow.Manager.AddApp(new App_Calculator());
+            Parent.SetShow(false);
             return false;
         }
     }
@@ -1179,6 +1180,7 @@ namespace Project
         protected override bool HoverTimesUp(int mousePosX, int mousePosY)
         {
             MainWindow.Manager.AddApp(new App_FileExplorer());
+            Parent.SetShow(false);
             return false;
         }
     }
@@ -1332,6 +1334,7 @@ namespace Project
         protected override bool HoverTimesUp(int mousePosX, int mousePosY)
         {
             MainWindow.Manager.AddApp(new App_Calculator());
+            Parent.SetShow(false);
             return false;
         }
     }

@@ -15,7 +15,6 @@ namespace Project
         public List<NonDesktopApplication> List_ToBeAdded { get; private set; }
         public List<NonDesktopApplication> List_ToBeRemoved { get; private set; }
         public Proj_Application OnFocusApp { get; private set; }
-        public App_Desktop Desktop { get; private set; }
         public Menu Menu { get; private set; }
         public Switcher Switcher { get; private set; }
         public List<OrderRequest> pendingOrders;
@@ -40,8 +39,6 @@ namespace Project
             pendingOrders = new List<OrderRequest>();
             Menu = new Menu();
             Switcher = new Switcher();
-
-            //OnFocusApp = new App_Desktop();
 
         }
 
@@ -76,28 +73,21 @@ namespace Project
 
         public void Update(int clampedX, int clampedY, Point mousePos, Microsoft.Kinect.HandState handState, Microsoft.Speech.Recognition.SpeechRecognizedEventArgs lastFrameSpeech, Microsoft.Kinect.VisualGestureBuilder.Gesture lastFrameGesture)
         {
-            //Trace.WriteLine("==UpdateA==");
-
             Menu.Update(OnFocusApp == Menu, new Point(clampedX, clampedY), handState);
 
             Switcher.Update(false, new Point(clampedX, clampedY), handState);
 
-            Trace.WriteLine("OnFocusApp != Menu: " + (OnFocusApp != Menu));
             if (OnFocusApp != Menu)
             {
-                //Trace.WriteLine("Update CheckPoint B");
                 //Update app
                 for (int i = 0;i < RunningApps.Count;i++)
                 {
-                    //Trace.WriteLine("Update CheckPoint C1");
                     //MousePos will be subtituded by handPos and MouseOnClicked will be subtituded by gesture
                     RunningApps[i].Update(RunningApps[i] == OnFocusApp, i, mousePos, handState, 
                         lastFrameSpeech != null && RunningApps[i] == OnFocusApp? lastFrameSpeech.Result.Text: "",
                         lastFrameGesture != null && RunningApps[i] == OnFocusApp ? lastFrameGesture.Name.ToLower() : "");
-                    //Trace.WriteLine("Update CheckPoint C2");
                 }
             }
-            //Trace.WriteLine("==UpdateD==");
         }
 
         public void LateProcess()

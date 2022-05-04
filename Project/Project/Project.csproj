@@ -107,7 +107,6 @@
     <Compile Include="FileExtensionDictionary.cs" />
     <Compile Include="Menu.cs" />
     <Compile Include="Proj_Application.cs" />
-    <Compile Include="App_Desktop.cs" />
     <Compile Include="App_VideoPlayer.cs" />
     <Compile Include="ControlUnit.cs" />
     <Compile Include="LocalEdgeControl.cs" />

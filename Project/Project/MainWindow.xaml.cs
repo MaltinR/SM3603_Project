@@ -41,11 +41,8 @@ namespace Project
         public static int timerOfHovering = 0;
 
         //Color frame
-        byte[] blackScreenData = null;
         KinectSensor sensor = null;
-        WriteableBitmap colorImageBitmap = null;
-        FrameDescription colorFrameDescription = null;
-        byte[] colorData = null;
+        //FrameDescription colorFrameDescription = null;
 
         //Voice Reg
         private RecognizerInfo kinectRecognizerInfo;
@@ -61,7 +58,6 @@ namespace Project
 
         public static RenderManager RenderManager;
 
-        //Temp (Will be wrapped as a class)
         public static ControlUnit dragging;//To point class (Hand)
         public static ControlUnit hovering;//To point class (Hand)
 
@@ -69,7 +65,7 @@ namespace Project
         private VisualGestureBuilderDatabase vgbDb;
         private VisualGestureBuilderFrameReader vgbFrameReader;
 
-        private bool isDebug = true;
+        private bool isDebug = false;
         public HandControl[] HandControls { get; private set; }
         //private Body[] bodies;
 
@@ -133,15 +129,8 @@ namespace Project
 
             BodyFrameReaderInit();
 
-
-
             //Debug
-            //Manager.AddApp(new App_VideoPlayer("E:/School/CityU/221/SM3603/SM3603_Project/SampleVideos/277957136_1030137967586408_6026758252614106551_n.mp4"));
-            //Manager.AddApp(new App_VideoPlayer("E:/School/CityU/221/SM3603/SM3603_Project/SampleVideos/277957136_1030137967586408_6026758252614106551_n.mp4"));
-            //Manager.AddApp(new App_FileExplorer());
-            //Manager.AddApp(new App_Calculator());
-            Manager.AddApp(new App_TextEditor("D:/Users/User/Desktop/test.txt"));
-            //Manager.AddApp(new App_ImageEditor("E:/School/CityU/221/SM3603/SM3603_Project/Test.png"));
+            //Manager.AddApp()
         }
 
         public void ResetGestureTimer()
@@ -205,17 +194,10 @@ namespace Project
                                 highest_gesture = gesture;
                                 highest_Score = result.Confidence;
                             }
-                            //Console.WriteLine(gesture.Name + " gesture recognized; confidence: " + result.Confidence);
                         }
                     }
 
                     _lastFrameGesture = highest_gesture;
-                    /*
-                    if (highest_gesture != null)
-                    {
-                        DebugLine.Text = (highest_gesture.Name + " : " + highest_Score);
-                    }
-                    */
                 }
             }
 
@@ -233,10 +215,6 @@ namespace Project
         {
             BodyFrameReader bodyFrameReader = sensor.BodyFrameSource.OpenReader();
             bodyFrameReader.FrameArrived += BodyFrameReader_FrameArrived;
-
-            // BodyCount: maximum number of bodies that can be tracked at one time
-            //bodies = new Body[sensor.BodyFrameSource.BodyCount];
-            //bodies = new Body[1];//In our project one is ok
         }
 
         private void BodyFrameReader_FrameArrived(object sender, BodyFrameArrivedEventArgs e)
@@ -345,7 +323,7 @@ namespace Project
         void DrawPoint(Body body, DrawingContext dc, JointType jt, SolidColorBrush color)
         {
             Point pt = MapCameraPointToColorSpace(body, jt);
-            //Console.WriteLine(pt.X + " , " + pt.Y);
+
             dc.DrawEllipse(color, null, new Point(pt.X < 10? 10:pt.X >= Drawing_Width - 10? Drawing_Width - 10:pt.X, pt.Y < 10 ? 10 : pt.Y >= Drawing_Height - 10 ? Drawing_Height - 10 : pt.Y), 10, 10);
         }
 
@@ -353,9 +331,6 @@ namespace Project
         private Point MapCameraPointToColorSpace(Body body, JointType jointType)
         {
             ColorSpacePoint rawPoint = sensor.CoordinateMapper.MapCameraPointToColorSpace(body.Joints[jointType].Position);
-
-            //Console.WriteLine(rawPoint.X + ", " + rawPoint.Y);
-            //DebugLine.Text = rawPoint.X + ", " + rawPoint.Y;
 
             float margin_X = Drawing_Width * 0.2f;
             float margin_Y = Drawing_Height * 0.2f;
@@ -413,23 +388,6 @@ namespace Project
             ColorFrameReader colorFrameReader = sensor.ColorFrameSource.OpenReader();
 
             colorFrameReader.FrameArrived += ColorFrameReader_FrameArrived;
-
-            colorFrameDescription = sensor.ColorFrameSource.CreateFrameDescription(ColorImageFormat.Bgra);
-
-            colorData = new byte[colorFrameDescription.LengthInPixels * colorFrameDescription.BytesPerPixel];
-
-            colorImageBitmap = new WriteableBitmap(
-                      colorFrameDescription.Width,
-                      colorFrameDescription.Height,
-                      96, // dpi-x
-                      96, // dpi-y
-                      PixelFormats.Bgr32, // pixel format  
-                      null);
-
-
-            //ColorCam.Source = colorImageBitmap;
-
-            blackScreenData = new byte[colorFrameDescription.LengthInPixels * colorFrameDescription.BytesPerPixel];
         }
 
         // The following function is borrowed from SM3603-Topic06
@@ -443,8 +401,6 @@ namespace Project
                                         new Rect(0.0, 0.0,
                                         SystemParameters.PrimaryScreenWidth, 
                                         SystemParameters.PrimaryScreenHeight));
-                                        //DrawingPlane.Width,
-                                        //DrawingPlane.Height));
         }
 
         private void ColorFrameReader_FrameArrived(object sender, ColorFrameArrivedEventArgs e)
@@ -496,18 +452,11 @@ namespace Project
             // the same culture as the recognizer (US English)
             grammarBuilder.Culture = MainWindow.mainWindow.kinectRecognizerInfo.Culture;
 
-            //String[] codes = { "Apple", "Watermelon", "Banana" };
-
             Choices choices = new Choices(options);
-            //choices.Add(codes);
 
             grammarBuilder.Append(choices);
 
             return new Grammar(grammarBuilder);
-
-            //Grammar grammar = new Grammar(grammarBuilder);
-
-            //recognizer.LoadGrammar(grammar);
         }
 
         private void BuildGrammar() // call it Window_Loaded()

@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Project"
         mc:Ignorable="d"
-        Title="MainWindow" Height="840" Width="1280" Loaded="Window_Loaded" MinWidth="1280" MinHeight="840" Background="#FFD2FFFE">
+        Title="Desktop Interaction Kit" Height="840" Width="1280" Loaded="Window_Loaded" MinWidth="1280" MinHeight="840" Background="#FFD2FFFE">
 	<Grid Margin="0,0,0,0">
 		<Image x:Name="DrawingPlane" HorizontalAlignment="Left" Width="1260" Height="700" Margin="0,0,0,0" VerticalAlignment="Top"/>
 		<Image x:Name="Select_Hold" Margin="-125,210,1355,401" Source="Images/CursorSelection_Holding.png" Stretch="Fill" Width="50" Height="52"/>

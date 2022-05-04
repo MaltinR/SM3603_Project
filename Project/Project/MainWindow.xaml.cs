@@ -112,7 +112,7 @@ namespace Project
             // let the convertStream know speech is going active
             kinectAudioStream.SpeechActive = true;
 
-            isDebug = true;
+            //isDebug = true;
             if (isDebug)//Debug: true = normal mic, false = kinect mic
             {
                 Recognizer.SetInputToDefaultAudioDevice();
